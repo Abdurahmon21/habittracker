@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAT + IELTS Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #222;
+    --border: #2e2e2e; --border2: #3a3a3a;
+    --text: #f0f0f0; --muted: #555; --muted2: #888;
+    --green: #4ade80; --green-bg: #0d2818; --green-border: #1a4a2e;
+    --blue: #60a5fa; --blue-bg: #0d1f3a; --blue-border: #1a3a6e;
+    --amber: #fbbf24; --amber-bg: #1a1200; --amber-border: #3a2e00;
+    --purple: #a78bfa; --purple-bg: #1a0d3a; --purple-border: #2e1a6e;
+    --red: #f87171;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; padding: 2rem 1rem 4rem; }
+  .container { max-width: 980px; margin: 0 auto; }
+
+  header { margin-bottom: 2rem; }
+  h1 { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; }
+  .header-sub { font-size: 12px; color: var(--muted2); margin-top: 4px; font-family: 'DM Mono', monospace; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 1.25rem 0; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+  .stat-val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; }
+  .stat-val.green { color: var(--green); } .stat-val.blue { color: var(--blue); }
+  .stat-val.amber { color: var(--amber); } .stat-val.red { color: var(--red); }
+  .stat-label { font-size: 11px; color: var(--muted2); margin-top: 2px; }
+
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; margin-bottom: 6px; }
+  .progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--green); transition: width 0.4s; }
+
+  .phase { margin-bottom: 2.5rem; }
+  .phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; }
+  .phase-tag { font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; padding: 3px 10px; border-radius: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .phase-tag.sat { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+  .phase-tag.ielts { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+  .phase-dates { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; }
+
+  .days-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 8px; }
+
+  .day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 11px; cursor: pointer; transition: border-color 0.15s; position: relative; }
+  .day-card:hover { border-color: var(--border2); }
+  .day-card.done { background: var(--green-bg); border-color: var(--green-border); }
+  .day-card.today { border-color: var(--blue); border-width: 1.5px; }
+  .day-card.past-undone { opacity: 0.4; }
+
+  .day-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1px; }
+  .day-num { font-family: 'DM Mono', monospace; font-size: 17px; font-weight: 500; }
+  .day-card.done .day-num { color: var(--green); }
+  .day-month { font-size: 11px; color: var(--muted2); font-family: 'DM Mono', monospace; }
+  .day-wd { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .today-tag { position: absolute; top: 8px; right: 8px; font-size: 9px; color: var(--blue); font-family: 'DM Mono', monospace; }
+
+  .task-pills { display: flex; flex-direction: column; gap: 3px; }
+  .pill { font-size: 10px; padding: 2px 6px; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pill.sat-e { background: var(--blue-bg); color: #93c5fd; }
+  .pill.sat-m { background: var(--purple-bg); color: #c4b5fd; }
+  .pill.ielts { background: var(--amber-bg); color: #fcd34d; }
+  .pill.done-pill { background: var(--green-bg); color: #86efac; text-decoration: line-through; opacity: 0.6; }
+
+  /* Modal */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
+  .overlay.open { display: flex; }
+  .modal { background: #181818; border: 1px solid var(--border2); border-radius: 12px; padding: 1.5rem; width: 380px; max-width: 96vw; max-height: 92vh; overflow-y: auto; }
+  .m-date { font-family: 'DM Mono', monospace; font-size: 17px; font-weight: 500; }
+  .m-sub { font-size: 12px; color: var(--muted2); margin-top: 3px; margin-bottom: 1.25rem; font-family: 'DM Mono', monospace; }
+
+  .m-section { margin-bottom: 1rem; }
+  .m-section-title { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+
+  .m-task { display: flex; align-items: flex-start; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .m-task:last-child { border-bottom: none; }
+  .m-check { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; cursor: pointer; transition: all 0.15s; }
+  .m-check.on { background: var(--green); border-color: var(--green); }
+  .m-check.on::after { content: '✓'; font-size: 11px; color: #000; font-weight: 700; }
+  .m-task-content { flex: 1; }
+  .m-task-label { font-size: 13px; line-height: 1.4; cursor: pointer; }
+  .m-task.checked .m-task-label { color: var(--muted2); text-decoration: line-through; }
+  .m-task-link { display: inline-block; margin-top: 4px; font-size: 11px; color: var(--blue); text-decoration: none; font-family: 'DM Mono', monospace; }
+  .m-task-link:hover { text-decoration: underline; }
+  .m-task-tip { font-size: 11px; color: var(--muted2); margin-top: 3px; line-height: 1.4; }
+
+  .m-footer { display: flex; gap: 8px; margin-top: 1.25rem; }
+  .btn { flex: 1; padding: 9px; border-radius: 6px; font-size: 13px; font-family: 'DM Sans', sans-serif; cursor: pointer; border: 1px solid var(--border2); background: transparent; color: var(--text); transition: background 0.15s; }
+  .btn:hover { background: var(--surface2); }
+  .btn.g { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+  .btn.g:hover { background: #0f3020; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>SAT + IELTS Tracker</h1>
+    <div class="header-sub">25-may — 15-iyun · Har kun 5 ta vazifa</div>
+  </header>
+  <div class="stats-row" id="stats"></div>
+  <div class="progress-wrap">
+    <div class="progress-meta"><span id="p-label"></span><span id="p-pct"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="p-fill" style="width:0%"></div></div>
+  </div>
+  <div id="phases"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="m-date" id="m-date"></div>
+    <div class="m-sub" id="m-sub"></div>
+    <div id="m-body"></div>
+    <div class="m-footer">
+      <button class="btn" onclick="closeModal()">Yopish</button>
+      <button class="btn g" onclick="markAll()">Barchasini ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MONTHS = ['yan','fev','mar','apr','may','iyn','iyl'];
+const WD = ['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
+const WDS = ['Yak','Dush','Sesh','Chor','Pay','Jum','Shan'];
+
+// Each task: { label, type, url, tip }
+const SAT_ENGLISH = [
+  { label: 'Grammar: Tenses — 20 ta savol', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions > Verb tenses' },
+  { label: 'Grammar: Subject-verb agreement', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions > Agreement' },
+  { label: 'Grammar: Punctuation & structure', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions > Punctuation' },
+  { label: 'Grammar: Pronouns & modifiers', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions > Pronouns' },
+  { label: 'Grammar: Transitions & rhetoric', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Expression of Ideas > Transitions' },
+  { label: 'SAT Reading: 1 ta to\'liq passage', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Information & Ideas' },
+  { label: 'Grammar: Mixed test — 25 savol', type: 'sat-e', url: 'https://www.oneprep.xyz/question-rush', tip: 'Question Rush — timed mode ni yoq' },
+  { label: 'SAT Reading: Inference savollar', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Inference' },
+  { label: 'Grammar: Word choice & concision', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Expression of Ideas > Word choice' },
+  { label: 'SAT Reading: Timed passage (9 min)', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Stopwatch qo\'y, 9 daqiqada 1 passage tugat' },
+  { label: 'Grammar: Parallel structure', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions' },
+  { label: 'SAT English: Full section mock', type: 'sat-e', url: 'https://www.oneprep.xyz/predicted-papers', tip: 'To\'liq test — rasmiy vaqt bilan' },
+];
+
+const SAT_ENGLISH2 = [
+  { label: 'Reading: Vocabulary in context', type: 'sat-e', url: 'https://www.oneprep.xyz/vocab', tip: 'Vocab section — SAT wordbank' },
+  { label: 'Reading: Evidence-based questions', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Command of Evidence' },
+  { label: 'Reading: Science passage', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Science texts' },
+  { label: 'Reading: History passage', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > History texts' },
+  { label: 'Reading: Paired passages', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Paired texts' },
+  { label: 'Reading: Main idea & purpose', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Central Ideas' },
+  { label: 'Reading: Data interpretation', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Charts & graphs' },
+  { label: 'Xatolarni tahlil — oxirgi 2 kun', type: 'sat-e', url: 'https://www.oneprep.xyz/predicted-papers', tip: 'Review qismiga o\'t, nima uchun xato deb qayta o\'qi' },
+  { label: 'Vocab: 20 ta SAT so\'z', type: 'sat-e', url: 'https://www.oneprep.xyz/vocab/wordbank', tip: 'Har so\'zni kontekstda o\'qi, yod olma' },
+  { label: 'Reading: 2 ta qisqa passage', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Tez o\'qi, asosiy gapni topi' },
+  { label: 'Challenge questions — English', type: 'sat-e', url: 'https://www.oneprep.xyz/challenge-questions', tip: 'Eng qiyin savolar — 750+ uchun' },
+  { label: 'Diagnostic test — English qismi', type: 'sat-e', url: 'https://www.oneprep.xyz/diagnostic', tip: 'Zaif joylarni aniq ko\'rish uchun' },
+];
+
+const SAT_MATH = [
+  { label: 'Math: Linear equations — 15 savol', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Algebra > Linear equations' },
+  { label: 'Math: Systems of equations', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Algebra > Systems' },
+  { label: 'Math: Quadratic functions', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Advanced Math > Quadratics' },
+  { label: 'Math: Ratios & proportions', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Problem Solving > Ratios' },
+  { label: 'Math: Percentages & word problems', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Problem Solving > Percentages' },
+  { label: 'Math: Statistics & data analysis', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Problem Solving > Statistics' },
+  { label: 'Math: Geometry — areas & angles', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Geometry' },
+  { label: 'Math: Functions & graphs', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Advanced Math > Functions' },
+  { label: 'Math: Exponents & radicals', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Advanced Math > Exponents' },
+  { label: 'Math: Inequalities', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Algebra > Inequalities' },
+  { label: 'Math: Hard problems (level 4-5)', type: 'sat-m', url: 'https://www.oneprep.xyz/challenge-questions', tip: 'Challenge questions — Math filter' },
+  { label: 'Math: Full section mock', type: 'sat-m', url: 'https://www.oneprep.xyz/predicted-papers', tip: 'To\'liq math section — rasmiy vaqt' },
+];
+
+const SAT_MATH2 = [
+  { label: 'Math: Khan Academy unit test', type: 'sat-m', url: 'https://www.khanacademy.org/test-prep/v2-sat-math', tip: 'Bitta unit tugat, xatolarni ko\'r' },
+  { label: 'Math: Xatolarni tahlil qil', type: 'sat-m', url: 'https://www.oneprep.xyz/predicted-papers', tip: 'Review — nima uchun xato, formulani yoz' },
+  { label: 'Math: Timed 15 savol (18 daqiqa)', type: 'sat-m', url: 'https://www.oneprep.xyz/question-rush', tip: 'Question Rush — Math — timed mode' },
+  { label: 'Math: Word problem sprint', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Problem Solving — 10 ta' },
+  { label: 'Math: No-calc questions', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > No calculator section' },
+  { label: 'Math: College Board free test', type: 'sat-m', url: 'https://satsuite.collegeboard.org/digital/digital-practice-preparation/practice-tests', tip: 'Official CB practice test — bepul' },
+  { label: 'Math: Grid-in questions', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Student-produced response' },
+  { label: 'Math: Algebra sprint — 20 ta', type: 'sat-m', url: 'https://www.oneprep.xyz/question-rush', tip: 'Question Rush — Algebra category' },
+  { label: 'Math: Score booster drill', type: 'sat-m', url: 'https://www.oneprep.xyz/challenge-questions', tip: '750 dan yuqori uchun challenge questions' },
+  { label: 'Math: Geometry full set', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Geometry & Trigonometry' },
+  { label: 'Math: Trig basics', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Geometry > Trigonometry' },
+  { label: 'Math: Final timed drill', type: 'sat-m', url: 'https://www.oneprep.xyz/question-rush', tip: 'Question Rush — Mixed math — max tezlik' },
+];
+
+const IELTS_TASKS = [
+  { label: 'Listening: Section 1 + tahlil', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-listening/', tip: 'Answers ni tekshirib, eshitmagan joylarda script o\'qi' },
+  { label: 'Listening: Section 2 + xatolar', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-listening/', tip: 'Map/diagram savollariga e\'tibor ber' },
+  { label: 'Listening: Section 3 + tahlil', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-listening/', tip: 'Academic discussion — so\'zlarni oldindan o\'qi' },
+  { label: 'Listening: Section 4 + xatolar', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-listening/', tip: 'Eng qiyin section — lecture style' },
+  { label: 'Writing Task 2: Argument essay', type: 'ielts', url: 'https://www.ieltsadvantage.com/writing-task-2/', tip: 'Intro + 2 body + conclusion. 250+ so\'z' },
+  { label: 'Writing Task 2: Discussion essay', type: 'ielts', url: 'https://www.ieltsadvantage.com/writing-task-2/', tip: 'Ikki tomonni ko\'rsatib, o\'z fikrini ayt' },
+  { label: 'Writing Task 1: Graph describe', type: 'ielts', url: 'https://www.ieltsadvantage.com/writing-task-1/', tip: 'Overview + trends. 150+ so\'z. Raqamlar muhim' },
+  { label: 'Writing: Essay qayta yozish', type: 'ielts', url: 'https://www.ieltsadvantage.com/writing-task-2/', tip: 'Kechagi essayni grammar xatolarini tuzat, qayta yoz' },
+  { label: 'Reading: Passage 1 + tahlil', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-reading/', tip: 'True/False/NG — qoidani yaxshi bil' },
+  { label: 'Reading: Passage 2 + xatolar', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-reading/', tip: 'Matching headings — skim first, detail later' },
+  { label: 'Reading: Passage 3 — timed', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-reading/', tip: '20 daqiqa — passage 3 eng qiyin' },
+  { label: 'Reading: Skimming & scanning drill', type: 'ielts', url: 'https://ieltsliz.com/ielts-reading-skills/', tip: 'Ieltsliz — reading tips sahifasi' },
+  { label: 'Speaking: Part 1 — record & listen', type: 'ielts', url: 'https://ieltsliz.com/ielts-speaking-part-1/', tip: 'Telefonga yozib ol, qayta tingli — qayerda to\'xtatasan?' },
+  { label: 'Speaking: Part 2 — cue card (2 min)', type: 'ielts', url: 'https://ieltsliz.com/ielts-speaking-part-2/', tip: '1 daqiqa tayyorla, 2 daqiqa gapir. Yozib ol' },
+  { label: 'Speaking: Part 3 — abstract Qs', type: 'ielts', url: 'https://ieltsliz.com/ielts-speaking-part-3/', tip: 'Sabab ko\'rsat, misol kel, xulosa qil' },
+  { label: 'Grammar: Tenses drill — 20 ta', type: 'ielts', url: 'https://www.perfect-english-grammar.com/tenses.html', tip: 'Past perfect va present perfect muhim' },
+  { label: 'Grammar: Articles & Prepositions', type: 'ielts', url: 'https://www.perfect-english-grammar.com/articles.html', tip: 'a/an/the + in/on/at — eng ko\'p xato' },
+  { label: 'Vocabulary: 20 ta academic word', type: 'ielts', url: 'https://www.vocabulary.com/lists/52473', tip: 'Academic Word List — kontekstda o\'rgan' },
+  { label: 'Mock: Listening + Reading (full)', type: 'ielts', url: 'https://www.ieltspractice.com/', tip: 'To\'liq test — rasmiy vaqt, telefon yo\'q' },
+  { label: 'Writing feedback — menga yubor', type: 'ielts', url: '', tip: 'Claude ga essay yubor — tuzatib beraman' },
+];
+
+function getDayTasks(idx, isPhase1) {
+  if (isPhase1) {
+    return [
+      SAT_ENGLISH[idx % SAT_ENGLISH.length],
+      SAT_ENGLISH2[idx % SAT_ENGLISH2.length],
+      SAT_MATH[idx % SAT_MATH.length],
+      SAT_MATH2[idx % SAT_MATH2.length],
+      IELTS_TASKS[idx % IELTS_TASKS.length],
+    ];
+  } else {
+    return [0,1,2,3,4].map(i => IELTS_TASKS[(idx * 5 + i) % IELTS_TASKS.length]);
+  }
+}
+
+const days = [];
+const start = new Date(2025, 4, 25);
+const phase1end = new Date(2025, 5, 5);
+const end = new Date(2025, 5, 15);
+for (let d = new Date(start), idx = 0; d <= end; d.setDate(d.getDate()+1), idx++) {
+  const isPhase1 = new Date(d) <= phase1end;
+  days.push({ date: new Date(d), tasks: getDayTasks(idx, isPhase1), isPhase1 });
+}
+
+const today = new Date(); today.setHours(0,0,0,0);
+function isToday(d) { const x = new Date(d); x.setHours(0,0,0,0); return x.getTime()===today.getTime(); }
+function isPast(d) { const x = new Date(d); x.setHours(0,0,0,0); return x.getTime()<today.getTime(); }
+function getKey(i) { return 'ht4_'+i; }
+function loadCh(i) { try { return JSON.parse(localStorage.getItem(getKey(i)))||[]; } catch(e) { return []; } }
+function saveCh(i,a) { try { localStorage.setItem(getKey(i),JSON.stringify(a)); } catch(e) {} }
+function isDone(i) { return loadCh(i).length >= days[i].tasks.length; }
+
+let openIdx = null;
+
+function render() {
+  const p1 = days.filter(d => d.isPhase1);
+  const p2 = days.filter(d => !d.isPhase1);
+  const phases = [
+    { label: 'SAT Focus', dates: '25-may — 5-iyun', tag: 'sat', days: p1, offset: 0 },
+    { label: 'IELTS Focus', dates: '6-iyun — 15-iyun', tag: 'ielts', days: p2, offset: p1.length }
+  ];
+  document.getElementById('phases').innerHTML = '';
+  phases.forEach(ph => {
+    const el = document.createElement('div');
+    el.className = 'phase';
+    el.innerHTML = `<div class="phase-header"><span class="phase-tag ${ph.tag}">${ph.label}</span><span class="phase-dates">${ph.dates}</span></div><div class="days-grid" id="g${ph.offset}"></div>`;
+    document.getElementById('phases').appendChild(el);
+    const grid = document.getElementById('g'+ph.offset);
+    ph.days.forEach((day, j) => {
+      const i = ph.offset + j;
+      const ch = loadCh(i);
+      const done = isDone(i);
+      const tod = isToday(day.date);
+      const past = isPast(day.date);
+      const card = document.createElement('div');
+      let cls = 'day-card' + (done?' done':'') + (tod?' today':'') + (past&&!done?' past-undone':'');
+      card.className = cls;
+      card.onclick = () => openModal(i);
+      const dd = day.date.getDate();
+      const mm = MONTHS[day.date.getMonth()];
+      const wd = WDS[day.date.getDay()];
+      let pillsHtml = '';
+      day.tasks.forEach((t, ti) => {
+        const checked = ch.includes(ti);
+        pillsHtml += `<div class="pill ${checked?'done-pill':t.type}">${t.label}</div>`;
+      });
+      card.innerHTML = `
+        ${tod?'<div class="today-tag">BUGUN</div>':''}
+        <div class="day-head"><div class="day-num">${dd}</div><div class="day-month">${mm}</div></div>
+        <div class="day-wd">${wd}</div>
+        <div class="task-pills">${pillsHtml}</div>
+      `;
+      grid.appendChild(card);
+    });
+  });
+
+  const totalDone = days.filter((_,i) => isDone(i)).length;
+  const tasksDone = days.reduce((s,_,i) => s + loadCh(i).length, 0);
+  const streak = calcStreak();
+  const pct = Math.round(totalDone / days.length * 100);
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-card"><div class="stat-val green">${totalDone}</div><div class="stat-label">Kun bajarildi</div></div>
+    <div class="stat-card"><div class="stat-val blue">${tasksDone}/${days.length*5}</div><div class="stat-label">Vazifalar</div></div>
+    <div class="stat-card"><div class="stat-val amber">${streak}</div><div class="stat-label">Streak 🔥</div></div>
+    <div class="stat-card"><div class="stat-val red">${days.length-totalDone}</div><div class="stat-label">Qolgan kun</div></div>
+  `;
+  document.getElementById('p-fill').style.width = pct+'%';
+  document.getElementById('p-label').textContent = `${totalDone} / ${days.length} kun`;
+  document.getElementById('p-pct').textContent = pct+'%';
+}
+
+function calcStreak() {
+  let s = 0;
+  for (let i = days.length-1; i >= 0; i--) {
+    if (isPast(days[i].date)||isToday(days[i].date)) {
+      if (isDone(i)) s++; else if (isPast(days[i].date)) break;
+    }
+  }
+  return s;
+}
+
+function openModal(i) {
+  openIdx = i;
+  const day = days[i];
+  const ch = loadCh(i);
+  document.getElementById('m-date').textContent = `${day.date.getDate()} ${MONTHS[day.date.getMonth()]} — ${WD[day.date.getDay()]}`;
+  document.getElementById('m-sub').textContent = day.isPhase1 ? 'SAT Focus · 4 SAT + 1 IELTS' : 'IELTS Focus · 5 IELTS';
+
+  const sections = day.isPhase1
+    ? [
+        { title: 'SAT English', tasks: day.tasks.slice(0,2), idxs: [0,1] },
+        { title: 'SAT Math', tasks: day.tasks.slice(2,4), idxs: [2,3] },
+        { title: 'IELTS', tasks: day.tasks.slice(4,5), idxs: [4] },
+      ]
+    : [{ title: 'IELTS', tasks: day.tasks, idxs: [0,1,2,3,4] }];
+
+  let html = '';
+  sections.forEach(sec => {
+    html += `<div class="m-section"><div class="m-section-title">${sec.title}</div>`;
+    sec.tasks.forEach((t, j) => {
+      const ti = sec.idxs[j];
+      const on = ch.includes(ti);
+      html += `
+        <div class="m-task${on?' checked':''}" id="task-${ti}">
+          <div class="m-check${on?' on':''}" onclick="toggle(${i},${ti})"></div>
+          <div class="m-task-content">
+            <div class="m-task-label" onclick="toggle(${i},${ti})">${t.label}</div>
+            ${t.url ? `<a class="m-task-link" href="${t.url}" target="_blank">→ Ochish</a>` : ''}
+            ${t.tip ? `<div class="m-task-tip">💡 ${t.tip}</div>` : ''}
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('m-body').innerHTML = html;
+  document.getElementById('overlay').classList.add('open');
+}
+
+function toggle(i, ti) {
+  const ch = loadCh(i);
+  const idx = ch.indexOf(ti);
+  if (idx===-1) ch.push(ti); else ch.splice(idx,1);
+  saveCh(i, ch);
+  openModal(i);
+  render();
+}
+
+function markAll() {
+  if (openIdx===null) return;
+  saveCh(openIdx, days[openIdx].tasks.map((_,i)=>i));
+  openModal(openIdx);
+  render();
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  openIdx = null;
+}
+document.getElementById('overlay').onclick = function(e) { if(e.target===this) closeModal(); };
+render();
+</script>
+</body>
+</html>
