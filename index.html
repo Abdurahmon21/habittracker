@@ -23,142 +23,59 @@
     padding: 20px; transition: background 0.3s, color 0.3s;
   }
   .container { max-width: 900px; margin: 0 auto; }
-  header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
-  }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
   h1 { font-size: 28px; font-weight: 700; }
   .controls { display: flex; gap: 8px; flex-wrap: wrap; }
-  button {
-    background: var(--card); color: var(--text); border: 1px solid var(--border);
-    padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px;
-    transition: all 0.2s;
-  }
+  button { background: var(--card); color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
   button:hover { background: var(--card-hover); transform: translateY(-1px); }
   button.primary { background: var(--accent); color: white; border-color: var(--accent); }
-  .user-bar {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--card); padding: 10px 16px; border-radius: 10px;
-    border: 1px solid var(--border); margin-bottom: 20px; font-size: 14px;
-  }
+  .user-bar { display: flex; align-items: center; gap: 12px; background: var(--card); padding: 10px 16px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 20px; font-size: 14px; }
   .user-bar .email { color: var(--text-dim); flex: 1; }
   .sync-status { font-size: 12px; color: var(--text-dim); }
   .sync-status.syncing { color: var(--warning); }
   .sync-status.synced { color: var(--success); }
-  .stats {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
-    margin-bottom: 24px;
-  }
-  .stat {
-    background: var(--card); padding: 16px; border-radius: 12px;
-    border: 1px solid var(--border); text-align: center;
-  }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat { background: var(--card); padding: 16px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
   .stat .value { font-size: 24px; font-weight: 700; }
   .stat .label { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
-  .progress-bar {
-    height: 8px; background: var(--card); border-radius: 4px;
-    overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border);
-  }
-  .progress-fill {
-    height: 100%; background: linear-gradient(90deg, var(--sat), var(--ielts));
-    transition: width 0.5s;
-  }
-  .filters {
-    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
-  }
-  .chip {
-    padding: 6px 12px; border-radius: 20px; font-size: 13px;
-    cursor: pointer; border: 1px solid var(--border); background: var(--card);
-  }
+  .progress-bar { height: 8px; background: var(--card); border-radius: 4px; overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border); }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--sat), var(--ielts)); transition: width 0.5s; }
+  .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .chip { padding: 6px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid var(--border); background: var(--card); }
   .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
-  .phase-header {
-    font-size: 13px; font-weight: 600; color: var(--text-dim);
-    text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px;
-  }
-  .day {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 16px; margin-bottom: 10px;
-    cursor: pointer; transition: all 0.2s;
-  }
+  .phase-header { font-size: 13px; font-weight: 600; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px; }
+  .day { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
   .day:hover { background: var(--card-hover); border-color: var(--accent); }
   .day.today { border-color: var(--accent); border-width: 2px; }
   .day.done { opacity: 0.6; }
-  .day-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 8px; flex-wrap: wrap; gap: 8px;
-  }
+  .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
   .day-title { font-weight: 600; font-size: 15px; }
   .day-date { font-size: 12px; color: var(--text-dim); }
-  .badge {
-    padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
-  }
+  .badge { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
   .badge.sat { background: rgba(139, 92, 246, 0.2); color: var(--sat); }
   .badge.ielts { background: rgba(6, 182, 212, 0.2); color: var(--ielts); }
-  .mini-progress {
-    height: 4px; background: var(--border); border-radius: 2px;
-    overflow: hidden; margin-top: 8px;
-  }
+  .mini-progress { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 8px; }
   .mini-fill { height: 100%; background: var(--accent); transition: width 0.3s; }
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    display: none; align-items: center; justify-content: center;
-    z-index: 100; padding: 20px;
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
   .modal-overlay.show { display: flex; }
-  .modal {
-    background: var(--card); border-radius: 16px; padding: 24px;
-    max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
-    border: 1px solid var(--border);
-  }
+  .modal { background: var(--card); border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border); }
   .modal h2 { margin-bottom: 16px; }
-  .task {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 10px; border-radius: 8px; margin-bottom: 6px;
-    cursor: pointer; transition: background 0.2s;
-  }
+  .task { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: background 0.2s; }
   .task:hover { background: var(--card-hover); }
-  .task input[type="checkbox"] {
-    width: 18px; height: 18px; cursor: pointer; flex-shrink: 0;
-  }
+  .task input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
   .task label { cursor: pointer; flex: 1; font-size: 14px; }
   .task.done label { text-decoration: line-through; color: var(--text-dim); }
-  .task .delete-task {
-    background: transparent; border: none; color: var(--text-dim);
-    cursor: pointer; padding: 2px 6px; opacity: 0; transition: opacity 0.2s;
-  }
+  .task .delete-task { background: transparent; border: none; color: var(--text-dim); cursor: pointer; padding: 2px 6px; opacity: 0; transition: opacity 0.2s; }
   .task:hover .delete-task { opacity: 1; }
-  .add-task-row {
-    display: flex; gap: 8px; margin-top: 10px;
-  }
-  .add-task-row input {
-    flex: 1; background: var(--bg); border: 1px solid var(--border);
-    color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 14px;
-  }
-  textarea.notes {
-    width: 100%; background: var(--bg); border: 1px solid var(--border);
-    color: var(--text); padding: 10px; border-radius: 8px; font-size: 14px;
-    min-height: 80px; margin-top: 12px; resize: vertical; font-family: inherit;
-  }
-  .modal-actions {
-    display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;
-  }
-  .login-screen {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; min-height: 80vh; gap: 20px; text-align: center;
-  }
+  .add-task-row { display: flex; gap: 8px; margin-top: 10px; }
+  .add-task-row input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 14px; }
+  textarea.notes { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 8px; font-size: 14px; min-height: 80px; margin-top: 12px; resize: vertical; font-family: inherit; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; gap: 20px; text-align: center; }
   .login-screen h1 { font-size: 36px; }
   .login-screen p { color: var(--text-dim); max-width: 400px; }
-  .google-btn {
-    background: white; color: #333; padding: 12px 24px;
-    border-radius: 10px; font-weight: 600; display: flex;
-    align-items: center; gap: 10px; border: none; font-size: 15px;
-  }
-  .toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--card); border: 1px solid var(--border);
-    padding: 12px 20px; border-radius: 10px; z-index: 200;
-    opacity: 0; transition: opacity 0.3s, transform 0.3s;
-  }
+  .google-btn { background: white; color: #333; padding: 12px 24px; border-radius: 10px; font-weight: 600; display: flex; align-items: center; gap: 10px; border: none; font-size: 15px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid var(--border); padding: 12px 20px; border-radius: 10px; z-index: 200; opacity: 0; transition: opacity 0.3s, transform 0.3s; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
   .hidden { display: none !important; }
   @media (max-width: 640px) {
@@ -170,11 +87,25 @@
   @media (max-width: 380px) {
     .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
   }
+
+  /* ========== RESOURCES SECTION ========== */
+  .resources-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .resources-header { font-size: 14px; font-weight: 600; color: var(--text-dim); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .resource-topic { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+  .resource-topic-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .resource-cat-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: var(--border); color: var(--text-dim); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  .resource-links { display: flex; flex-direction: column; gap: 4px; }
+  .resource-link { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; text-decoration: none; color: var(--text); font-size: 13px; transition: background 0.15s; }
+  .resource-link:hover { background: var(--card-hover); color: var(--accent); }
+  .resource-link-icon { font-size: 14px; flex-shrink: 0; }
+  .resource-link-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .resource-external { font-size: 11px; color: var(--text-dim); opacity: 0.6; }
+  .no-resources { font-size: 12px; color: var(--text-dim); font-style: italic; padding: 8px; text-align: center; }
+
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
 <div id="loginScreen" class="login-screen">
   <h1>📚 SAT + IELTS Tracker</h1>
   <p>22 kunlik intensiv reja. Google bilan kirib, ma'lumotlaringizni har qanday qurilmada sinxronlashtiring.</p>
@@ -184,7 +115,6 @@
   </button>
 </div>
 
-<!-- APP -->
 <div id="app" class="container hidden">
   <header>
     <h1>📚 SAT + IELTS Tracker</h1>
@@ -194,22 +124,18 @@
       <button onclick="logout()">Logout</button>
     </div>
   </header>
-
   <div class="user-bar">
     <span>👤</span>
     <span class="email" id="userEmail"></span>
     <span class="sync-status" id="syncStatus">●</span>
   </div>
-
   <div class="stats">
     <div class="stat"><div class="value" id="dayNum">0/22</div><div class="label">Day</div></div>
     <div class="stat"><div class="value" id="overallPct">0%</div><div class="label">Overall</div></div>
     <div class="stat"><div class="value" id="streakNum">0</div><div class="label">Streak 🔥</div></div>
     <div class="stat"><div class="value" id="bestStreakNum">0</div><div class="label">Best</div></div>
   </div>
-
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-
   <div class="filters">
     <div class="chip active" data-filter="all">All</div>
     <div class="chip" data-filter="sat">SAT</div>
@@ -217,11 +143,9 @@
     <div class="chip" data-filter="today">Today</div>
     <div class="chip" data-filter="incomplete">Incomplete</div>
   </div>
-
   <div id="daysList"></div>
 </div>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
     <h2 id="modalTitle">Day</h2>
@@ -232,6 +156,11 @@
       <button class="primary" onclick="addCustomTask()">Add</button>
     </div>
     <textarea class="notes" id="dayNotes" placeholder="Notes for this day..."></textarea>
+    <div class="resources-section">
+      <div class="resources-header">📚 Tegishli resurslar</div>
+      <div id="resourcesContainer"></div>
+    </div>
+
     <div class="modal-actions">
       <button onclick="closeModal()">Close (Esc)</button>
     </div>
@@ -241,146 +170,146 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ==================== CONFIG ====================
 const SUPABASE_URL = 'https://zpifggpsmacyszldjkih.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwaWZnZ3BzbWFjeXN6bGRqa2loIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODI3NDgsImV4cCI6MjA5NTU1ODc0OH0.4VERNKvlU42qJTyvxE14CjeCgz--pKbs_aGnLi-aDBk';
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// ==================== DEFAULT PLAN ====================
 const DEFAULT_PLAN = [
-  // SAT Focus — 12 days
   { phase: 'SAT', title: 'SAT Day 1 — Reading basics', tasks: ['Read 1 SAT passage', '20 vocab words', '10 Reading questions', 'Review mistakes'] },
-  { phase: 'SAT', title: 'SAT Day 2 — Grammar rules', tasks: ['Punctuation rules', '15 grammar questions', '20 vocab words', 'Error log'] },
-  { phase: 'SAT', title: 'SAT Day 3 — Math no-calc', tasks: ['Algebra practice', '15 problems', 'Formula review', 'Mistake review'] },
-  { phase: 'SAT', title: 'SAT Day 4 — Reading deep', tasks: ['2 passages', 'Evidence questions', '20 vocab', 'Timed practice'] },
-  { phase: 'SAT', title: 'SAT Day 5 — Writing transitions', tasks: ['Transition rules', '15 questions', '20 vocab', 'Re-do mistakes'] },
-  { phase: 'SAT', title: 'SAT Day 6 — Math calc', tasks: ['Word problems', '15 problems', 'Graph reading', 'Mistake log'] },
-  { phase: 'SAT', title: 'SAT Day 7 — Full Reading section', tasks: ['Timed 65-min', 'Review answers', '20 vocab', 'Note weak areas'] },
-  { phase: 'SAT', title: 'SAT Day 8 — Full Writing section', tasks: ['Timed 35-min', 'Review answers', 'Rule review', 'Mistake log'] },
-  { phase: 'SAT', title: 'SAT Day 9 — Full Math section', tasks: ['No-calc 25min', 'Calc 55min', 'Review', 'Formula review'] },
-  { phase: 'SAT', title: 'SAT Day 10 — Mixed review', tasks: ['Weak areas', '30 mixed Qs', '20 vocab', 'Mistake patterns'] },
-  { phase: 'SAT', title: 'SAT Day 11 — Full mock test', tasks: ['Full 3-hour test', 'Score it', 'Detailed review', 'Goal: improve'] },
-  { phase: 'SAT', title: 'SAT Day 12 — Final review', tasks: ['Review all mistakes', 'Weak spots only', 'Light practice', 'Rest well'] },
-  // IELTS Focus — 10 days
-  { phase: 'IELTS', title: 'IELTS Day 1 — Listening intro', tasks: ['1 listening test', 'Note types of Qs', 'Review answers', 'Vocab list'] },
+  { phase: 'SAT', title: 'SAT Day 2 — Grammar rules (Boundaries)', tasks: ['Punctuation rules', '15 grammar questions', '20 vocab words', 'Error log'] },
+  { phase: 'SAT', title: 'SAT Day 3 — Math no-calc (Algebra)', tasks: ['Algebra practice', '15 problems', 'Formula review', 'Mistake review'] },
+  { phase: 'SAT', title: 'SAT Day 4 — Reading deep (Inferences)', tasks: ['2 passages', 'Inferences + Evidence questions', '20 vocab', 'Timed practice'] },
+  { phase: 'SAT', title: 'SAT Day 5 — Writing transitions', tasks: ['Transitions rules', '15 transitions questions', '20 vocab', 'Re-do mistakes'] },
+  { phase: 'SAT', title: 'SAT Day 6 — Math calc (Word Problems)', tasks: ['Word problems', '15 problems', 'Graph reading', 'Mistake log'] },
+  { phase: 'SAT', title: 'SAT Day 7 — Full Reading section', tasks: ['Timed 65-min Reading', 'Central ideas review', '20 vocab', 'Note weak areas'] },
+  { phase: 'SAT', title: 'SAT Day 8 — Full Writing section (Form Structure & Sense)', tasks: ['Timed 35-min Writing', 'Form Structure Sense review', 'Rule review', 'Mistake log'] },
+  { phase: 'SAT', title: 'SAT Day 9 — Full Math section (Quadratic + Exponential)', tasks: ['Quadratic 25min', 'Exponential 30min', 'Review', 'Formula review'] },
+  { phase: 'SAT', title: 'SAT Day 10 — Mixed review + Statistics', tasks: ['Statistics + Data Analysis', '30 mixed Qs', '20 vocab', 'Mistake patterns'] },
+  { phase: 'SAT', title: 'SAT Day 11 — Full mock + Rhetorical Synthesis', tasks: ['Full 3-hour test', 'Student Notes / Synthesis', 'Detailed review', 'Goal: improve'] },
+  { phase: 'SAT', title: 'SAT Day 12 — Final review', tasks: ['Review all mistakes', 'Words in context boost', 'Light practice', 'Rest well'] },
+  { phase: 'IELTS', title: 'IELTS Day 1 — Listening intro', tasks: ['1 listening test', 'Section 1 + 2 review', 'Review answers', 'Vocab list'] },
   { phase: 'IELTS', title: 'IELTS Day 2 — Reading skim/scan', tasks: ['1 passage', 'Skim techniques', 'T/F/NG practice', '20 vocab'] },
-  { phase: 'IELTS', title: 'IELTS Day 3 — Writing Task 1', tasks: ['Graph description', 'Structure review', '1 full essay', 'Self-edit'] },
-  { phase: 'IELTS', title: 'IELTS Day 4 — Writing Task 2', tasks: ['Essay structure', '1 full essay', 'Linking words', 'Self-edit'] },
-  { phase: 'IELTS', title: 'IELTS Day 5 — Speaking Part 1', tasks: ['Common topics', '15-min practice', 'Record yourself', 'Review'] },
-  { phase: 'IELTS', title: 'IELTS Day 6 — Speaking Part 2', tasks: ['Cue cards x3', '2-min answers', 'Record', 'Vocab boost'] },
-  { phase: 'IELTS', title: 'IELTS Day 7 — Listening full', tasks: ['Full 30-min test', 'All 4 sections', 'Review', 'Note weak parts'] },
-  { phase: 'IELTS', title: 'IELTS Day 8 — Reading full', tasks: ['Full 60-min test', 'All 3 passages', 'Review', 'Time strategy'] },
+  { phase: 'IELTS', title: 'IELTS Day 3 — Writing Task 1 (Graphs)', tasks: ['Bar chart description', 'Line graph practice', '1 full Task 1 essay', 'Self-edit'] },
+  { phase: 'IELTS', title: 'IELTS Day 4 — Writing Task 2 (Essays)', tasks: ['Essay structure', '1 full Task 2 essay', 'Linking words', 'Self-edit'] },
+  { phase: 'IELTS', title: 'IELTS Day 5 — Speaking Part 1', tasks: ['Common topics', '15-min Part 1 practice', 'Record yourself', 'Review'] },
+  { phase: 'IELTS', title: 'IELTS Day 6 — Speaking Part 2 + 3', tasks: ['Cue cards x3', '2-min Part 2 answers', 'Part 3 follow-ups', 'Vocab boost'] },
+  { phase: 'IELTS', title: 'IELTS Day 7 — Listening full', tasks: ['Full 30-min listening test', 'All 4 sections', 'Review', 'Note weak parts'] },
+  { phase: 'IELTS', title: 'IELTS Day 8 — Reading full', tasks: ['Full 60-min reading test', 'All 3 passages', 'Review', 'Time strategy'] },
   { phase: 'IELTS', title: 'IELTS Day 9 — Writing both tasks', tasks: ['Task 1 + Task 2 timed', 'Self-score', 'Review', 'Vocab boost'] },
   { phase: 'IELTS', title: 'IELTS Day 10 — Full mock', tasks: ['Full IELTS test', 'Score it', 'Final review', 'Rest'] }
 ];
 
-// ==================== STATE ====================
-let state = {
-  data: {},          // { dayIndex: { tasks: [{text, done}], notes, customTasks: [{text, done}] } }
-  startDate: null,
-  theme: 'dark',
-  notifications: false,
-  bestStreak: 0
-};
-let currentUser = null;
-let currentDayIdx = null;
-let currentFilter = 'all';
-let saveTimer = null;
 
-// ==================== AUTH ====================
+// ==================== RESOURCES ====================
+const RESOURCE_LIBRARY = {"form_structure_sense": {"title": "SAT Grammar — Form, Structure & Sense", "category": "SAT English", "keywords": ["form structure", "structure and sense", "form structure and sense", "fss"], "links": [{"label": "Khan Academy — Overview", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:form-structure-and-sense/a/form-structure-and-sense-overview", "type": "article"}, {"label": "Khan Academy — Practice Questions", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:form-structure-and-sense/e/form-structure-and-sense-foundations", "type": "practice"}, {"label": "Khan Academy — Worked Example", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:medium-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:form-structure-and-sense-2/v/form-structure-and-sense-quick-example", "type": "video"}]}, "boundaries": {"title": "SAT Grammar — Boundaries (Punctuation)", "category": "SAT English", "keywords": ["boundaries", "boundary", "punctuation", "comma", "semicolon"], "links": [{"label": "Khan Academy — Boundaries Overview", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:boundaries/a/boundaries-overview", "type": "article"}, {"label": "Khan Academy — Practice", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:boundaries/e/boundaries-foundations", "type": "practice"}, {"label": "Khan Academy — Worked Example", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:boundaries/v/boundaries-quick-example", "type": "video"}]}, "transitions": {"title": "SAT Grammar — Transitions", "category": "SAT English", "keywords": ["transition", "transitions", "linking words"], "links": [{"label": "Khan Academy — Foundations Practice", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:transitions/e/transitions-foundations", "type": "practice"}, {"label": "Khan Academy — Medium Practice", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:medium-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:transitions-2/e/transitions-medium", "type": "practice"}, {"label": "Khan Academy — Advanced Practice", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:advanced-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:transitions-3/e/transitions-advanced", "type": "practice"}]}, "rhetorical_synthesis": {"title": "SAT — Rhetorical Synthesis (Student Notes)", "category": "SAT English", "keywords": ["student notes", "rhetorical synthesis", "synthesis", "notes question"], "links": [{"label": "Khan Academy — Foundations", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:rhetorical-synthesis/e/rhetorical-synthesis-foundations", "type": "practice"}, {"label": "Khan Academy — Medium", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:medium-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:rhetorical-synthesis-2/e/rhetorical-synthesis-medium", "type": "practice"}, {"label": "Khan Academy — Advanced", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:advanced-expression-of-ideas-and-standard-english-conventions/x0d47bcec73eb6c4b:rhetorical-synthesis-3/e/rhetorical-synthesis-advanced", "type": "practice"}]}, "words_in_context": {"title": "SAT Reading — Words in Context", "category": "SAT Reading", "keywords": ["words in context", "vocabulary", "vocab", "word meaning"], "links": [{"label": "Khan Academy — Foundations", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-craft-and-structure/x0d47bcec73eb6c4b:words-in-context/e/words-in-context-foundations", "type": "practice"}, {"label": "Khan Academy — Medium", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:medium-craft-and-structure/x0d47bcec73eb6c4b:words-in-context-2/e/words-in-context-medium", "type": "practice"}, {"label": "Khan Academy — Advanced", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:advanced-craft-and-structure/x0d47bcec73eb6c4b:words-in-context-3/e/words-in-context-advanced", "type": "practice"}]}, "central_ideas": {"title": "SAT Reading — Central Ideas & Details", "category": "SAT Reading", "keywords": ["main idea", "central idea", "central ideas", "details", "main point"], "links": [{"label": "Khan Academy — Lesson", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:medium-information-and-ideas/x0d47bcec73eb6c4b:central-ideas-and-details-2/a/central-ideas-and-details-lesson", "type": "article"}, {"label": "Khan Academy — Foundations Practice", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-information-and-ideas/x0d47bcec73eb6c4b:central-ideas-and-details/e/central-ideas-and-details-foundations", "type": "practice"}, {"label": "Khan Academy — Medium Practice", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:medium-information-and-ideas/x0d47bcec73eb6c4b:central-ideas-and-details-2/e/central-ideas-and-details-medium", "type": "practice"}]}, "inferences": {"title": "SAT Reading — Inferences", "category": "SAT Reading", "keywords": ["inference", "inferences", "infer"], "links": [{"label": "Khan Academy — Top Tips", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:medium-information-and-ideas/x0d47bcec73eb6c4b:inferences-2/a/inferences-top-tips", "type": "article"}, {"label": "Khan Academy — Worked Example", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-information-and-ideas/x0d47bcec73eb6c4b:inferences/v/inferences-worked-example", "type": "video"}, {"label": "Khan Academy — Practice", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-information-and-ideas/x0d47bcec73eb6c4b:inferences/e/inferences-foundations", "type": "practice"}]}, "command_of_evidence": {"title": "SAT Reading — Command of Evidence", "category": "SAT Reading", "keywords": ["command of evidence", "evidence", "textual evidence", "supporting evidence"], "links": [{"label": "Khan Academy — Textual Evidence Practice", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-information-and-ideas/x0d47bcec73eb6c4b:command-of-evidence-textual/e/command-of-evidence-textual-foundations", "type": "practice"}, {"label": "Khan Academy — Quantitative Evidence", "url": "https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:foundations-information-and-ideas/x0d47bcec73eb6c4b:command-of-evidence-quantitative/e/command-of-evidence-quantitative-foundations", "type": "practice"}, {"label": "BWS Education — Practice Questions", "url": "https://bwseducationconsulting.com/digital-sat-practice-questions-command-of-evidence/", "type": "practice"}]}, "math_word_problems": {"title": "SAT Math — Word Problems", "category": "SAT Math", "keywords": ["word problem", "word problems"], "links": [{"label": "Khan Academy — Linear Word Problems Lesson", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:algebra-easier/x0fcc98a58ba3bea7:linear-equations-word-problems-easier/a/v2-sat-lesson-linear-equations-word-problems", "type": "article"}, {"label": "Khan Academy — Easier Practice", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:algebra-easier/x0fcc98a58ba3bea7:linear-equations-word-problems-easier/e/v2-linear-equations-word-problems-1", "type": "practice"}, {"label": "Khan Academy — Medium Practice", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:algebra-medium/x0fcc98a58ba3bea7:linear-equations-word-problems-medium/e/v2-linear-equations-word-problems-2", "type": "practice"}]}, "algebra": {"title": "SAT Math — Algebra", "category": "SAT Math", "keywords": ["algebra", "linear equation", "linear equations", "no-calc", "no calc"], "links": [{"label": "Khan Academy — SAT Math Home", "url": "https://www.khanacademy.org/test-prep/v2-sat-math", "type": "article"}, {"label": "Khan Academy — Algebra Easier", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:algebra-easier", "type": "practice"}, {"label": "Khan Academy — Algebra Medium", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:algebra-medium", "type": "practice"}]}, "quadratic": {"title": "SAT Math — Quadratic Functions", "category": "SAT Math", "keywords": ["quadratic", "quadratics", "parabola"], "links": [{"label": "Khan Academy — Quadratics Lesson", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:advanced-math-easier/x0fcc98a58ba3bea7:solving-quadratic-equations-easier/a/v2-sat-lesson-solving-quadratic-equations", "type": "article"}, {"label": "Khan Academy — Easier Practice", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:advanced-math-easier/x0fcc98a58ba3bea7:solving-quadratic-equations-easier/e/v2-solving-quadratic-equations-1", "type": "practice"}, {"label": "Khan Academy — Harder Practice", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:advanced-math-harder/x0fcc98a58ba3bea7:solving-quadratic-equations-harder/e/v2-solving-quadratic-equations-3", "type": "practice"}]}, "exponential": {"title": "SAT Math — Exponential & Growth", "category": "SAT Math", "keywords": ["exponential", "exponent", "exponents", "growth"], "links": [{"label": "Khan Academy — Exponential Graphs", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:advanced-math-easier/x0fcc98a58ba3bea7:exponential-graphs-easier/a/v2-sat-lesson-exponential-graphs", "type": "article"}, {"label": "Khan Academy — Linear vs Exponential Growth", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:problem-solving-and-data-analysis-easier/x0fcc98a58ba3bea7:linear-and-exponential-growth-easier/a/v2-sat-lesson-linear-and-exponential-growth", "type": "article"}, {"label": "Khan Academy — Practice", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:problem-solving-and-data-analysis-harder/x0fcc98a58ba3bea7:linear-and-exponential-growth-harder/e/v2-linear-and-exponential-growth-3", "type": "practice"}]}, "statistics": {"title": "SAT Math — Statistics & Data Analysis", "category": "SAT Math", "keywords": ["mean", "median", "mode", "statistics", "data analysis", "distribution", "standard deviation", "graph reading"], "links": [{"label": "Khan Academy — Center, Spread & Shape", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:problem-solving-and-data-analysis-easier/x0fcc98a58ba3bea7:center-spread-and-shape-of-distributions-easier/a/v2-sat-lesson-center-spread-and-shape-of-distributions", "type": "article"}, {"label": "Khan Academy — Mean/Median Review", "url": "https://www.khanacademy.org/math/statistics-probability/summarizing-quantitative-data/mean-median-basics/a/mean-median-and-mode-review", "type": "article"}, {"label": "Khan Academy — Practice", "url": "https://www.khanacademy.org/test-prep/v2-sat-math/x0fcc98a58ba3bea7:problem-solving-and-data-analysis-easier/x0fcc98a58ba3bea7:center-spread-and-shape-of-distributions-easier/e/v2-center-spread-and-shape-of-distributions-1", "type": "practice"}]}, "ielts_writing_task1": {"title": "IELTS Writing — Task 1 (Graphs/Charts)", "category": "IELTS Writing", "keywords": ["task 1", "task1", "graph", "chart", "bar chart", "line graph", "pie chart", "graph description"], "links": [{"label": "IELTS Liz — Task 1 Tips & Lessons", "url": "https://ieltsliz.com/ielts-writing-task-1-lessons-and-tips/", "type": "article"}, {"label": "IELTS Liz — Line Graph Band 9 Model", "url": "https://ieltsliz.com/ielts-writing-task-1-line-graph-model-score-9/", "type": "article"}, {"label": "IELTS Liz — Bar Chart Band 9 Model", "url": "https://ieltsliz.com/ielts-model-bar-chart-band-score-9/", "type": "article"}]}, "ielts_writing_task2": {"title": "IELTS Writing — Task 2 (Essays)", "category": "IELTS Writing", "keywords": ["task 2", "task2", "essay", "essays", "opinion essay", "discussion essay", "essay structure"], "links": [{"label": "IELTS Liz — Task 2 Tips & Lessons", "url": "https://ieltsliz.com/ielts-writing-task-2/", "type": "article"}, {"label": "IELTS Liz — Band 9 Sample Essay", "url": "https://ieltsliz.com/ielts-sample-essay/", "type": "article"}, {"label": "IELTS Liz — Direct Questions Band 9", "url": "https://ieltsliz.com/ielts-model-essay-score-9/", "type": "article"}]}, "ielts_reading": {"title": "IELTS Reading — Practice & Strategy", "category": "IELTS Reading", "keywords": ["true false not given", "t/f/ng", "matching headings", "reading practice", "skim", "scan"], "links": [{"label": "British Council — Reading Practice", "url": "https://takeielts.britishcouncil.org/take-ielts/prepare/free-ielts-english-practice-tests/reading", "type": "practice"}, {"label": "IELTS 9 — Question Types Strategy", "url": "https://ielts9.io/blog/ielts-reading-question-types-strategy", "type": "article"}, {"label": "IELTS Material — Practice Tests", "url": "http://www.ieltsmaterial.com/ielts-reading-practice-test-33-with-answers/", "type": "practice"}]}, "ielts_listening": {"title": "IELTS Listening — Practice Tests", "category": "IELTS Listening", "keywords": ["ielts listening", "listening practice", "section 1", "section 2", "section 3", "section 4"], "links": [{"label": "British Council — Free Listening Tests", "url": "https://takeielts.britishcouncil.org/take-ielts/prepare/free-ielts-english-practice-tests/listening", "type": "practice"}, {"label": "British Council — CD-IELTS Practice", "url": "https://takeielts.britishcouncil.org/take-ielts/prepare/free-ielts-english-practice-tests/ielts-on-computer/practice-tests/listening", "type": "practice"}, {"label": "British Council — All Practice Tests", "url": "https://takeielts.britishcouncil.org/take-ielts/prepare/free-ielts-english-practice-tests", "type": "practice"}]}, "ielts_speaking": {"title": "IELTS Speaking — All Parts", "category": "IELTS Speaking", "keywords": ["ielts speaking", "speaking part", "part 1", "part 2", "part 3", "cue card", "speaking practice"], "links": [{"label": "IELTS Liz — Full Speaking Test", "url": "https://ieltsliz.com/full-ielts-speaking-test-practice/", "type": "article"}, {"label": "IELTS Liz — Sample Speaking Test", "url": "https://ieltsliz.com/sample-ielts-speaking-test-may-2018/", "type": "article"}, {"label": "IELTS Liz — Practice Video", "url": "https://ieltsliz.com/ielts-speaking-practice-test-video/", "type": "video"}]}};
+
+function detectResourcesForText(text) {
+  if (!text) return [];
+  const lower = text.toLowerCase();
+  const matched = new Set();
+  for (const key in RESOURCE_LIBRARY) {
+    const topic = RESOURCE_LIBRARY[key];
+    for (const kw of topic.keywords) {
+      if (lower.includes(kw.toLowerCase())) { matched.add(key); break; }
+    }
+  }
+  return [...matched].map(k => ({ key: k, ...RESOURCE_LIBRARY[k] }));
+}
+
+function detectResourcesForDay(idx) {
+  const day = DEFAULT_PLAN[idx];
+  const d = getDayData(idx);
+  const allText = [day.title, ...d.tasks.map(t => t.text), ...(d.customTasks || []).map(t => t.text)].join(' ');
+  return detectResourcesForText(allText);
+}
+
+function iconForType(type) {
+  if (type === 'video') return '🎥';
+  if (type === 'practice') return '✏️';
+  return '📄';
+}
+
+function renderResources() {
+  const container = document.getElementById('resourcesContainer');
+  if (!container || currentDayIdx === null) return;
+  const topics = detectResourcesForDay(currentDayIdx);
+  if (topics.length === 0) {
+    container.innerHTML = '<div class="no-resources">Bu kun uchun mos resurs topilmadi. Custom task qo\'shing (mas: "transitions", "task 2", "quadratic") — linklar avtomatik chiqadi.</div>';
+    return;
+  }
+  container.innerHTML = topics.map(topic => `
+    <div class="resource-topic">
+      <div class="resource-topic-title">
+        ${topic.title}
+        <span class="resource-cat-badge">${topic.category}</span>
+      </div>
+      <div class="resource-links">
+        ${topic.links.map(link => `
+          <a href="${link.url}" target="_blank" rel="noopener" class="resource-link">
+            <span class="resource-link-icon">${iconForType(link.type)}</span>
+            <span class="resource-link-label">${link.label}</span>
+            <span class="resource-external">↗</span>
+          </a>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+
+let state = { data: {}, startDate: null, theme: 'dark', notifications: false, bestStreak: 0 };
+let currentUser = null, currentDayIdx = null, currentFilter = 'all', saveTimer = null;
+
 async function init() {
   const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    await loadData();
-    showApp();
-  } else {
-    showLogin();
-  }
+  if (session) { currentUser = session.user; await loadData(); showApp(); }
+  else { showLogin(); }
   sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session) {
-      currentUser = session.user;
-      await loadData();
-      showApp();
-    } else if (event === 'SIGNED_OUT') {
-      currentUser = null;
-      showLogin();
-    }
+    if (event === 'SIGNED_IN' && session) { currentUser = session.user; await loadData(); showApp(); }
+    else if (event === 'SIGNED_OUT') { currentUser = null; showLogin(); }
   });
 }
 
 async function loginGoogle() {
-  const { error } = await sb.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo: window.location.href }
-  });
+  const { error } = await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
   if (error) toast('Login error: ' + error.message);
 }
 
-async function logout() {
-  await sb.auth.signOut();
-}
+async function logout() { await sb.auth.signOut(); }
 
-function showLogin() {
-  document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('app').classList.add('hidden');
-}
+function showLogin() { document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('app').classList.add('hidden'); }
 
 function showApp() {
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   document.getElementById('userEmail').textContent = currentUser.email;
-  applyTheme();
-  render();
+  applyTheme(); render();
 }
 
-// ==================== DATA ====================
 async function loadData() {
   setSync('syncing');
   try {
-    const { data, error } = await sb
-      .from('habit_data')
-      .select('*')
-      .eq('user_id', currentUser.id)
-      .maybeSingle();
-
+    const { data, error } = await sb.from('habit_data').select('*').eq('user_id', currentUser.id).maybeSingle();
     if (error) throw error;
-
     if (data) {
       state.data = data.data || {};
       state.startDate = data.start_date || todayISO();
       state.theme = data.theme || 'dark';
       state.notifications = data.notifications || false;
       state.bestStreak = (data.data && data.data._bestStreak) || 0;
-    } else {
-      // First-time user — create row
-      state.startDate = todayISO();
-      state.data = {};
-      await saveData(true);
-    }
+    } else { state.startDate = todayISO(); state.data = {}; await saveData(true); }
     setSync('synced');
   } catch (e) {
     console.error(e);
-    // Fallback to localStorage
     const cached = localStorage.getItem('ht5_' + currentUser.id);
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      state = { ...state, ...parsed };
-    }
+    if (cached) { const parsed = JSON.parse(cached); state = { ...state, ...parsed }; }
     setSync('offline');
-    toast('Offline mode — saqlanmagan o\'zgarishlar keyinroq sync bo\'ladi');
+    toast('Offline mode');
   }
 }
 
 async function saveData(immediate = false) {
-  // Always save to localStorage instantly
-  localStorage.setItem('ht5_' + currentUser.id, JSON.stringify({
-    data: state.data, startDate: state.startDate,
-    theme: state.theme, notifications: state.notifications
-  }));
-
-  // Debounce Supabase saves (unless immediate)
+  localStorage.setItem('ht5_' + currentUser.id, JSON.stringify({ data: state.data, startDate: state.startDate, theme: state.theme, notifications: state.notifications }));
   if (saveTimer) clearTimeout(saveTimer);
   const delay = immediate ? 0 : 800;
   saveTimer = setTimeout(async () => {
@@ -388,18 +317,12 @@ async function saveData(immediate = false) {
     try {
       const dataWithMeta = { ...state.data, _bestStreak: state.bestStreak };
       const { error } = await sb.from('habit_data').upsert({
-        user_id: currentUser.id,
-        data: dataWithMeta,
-        start_date: state.startDate,
-        theme: state.theme,
-        notifications: state.notifications
+        user_id: currentUser.id, data: dataWithMeta,
+        start_date: state.startDate, theme: state.theme, notifications: state.notifications
       });
       if (error) throw error;
       setSync('synced');
-    } catch (e) {
-      console.error(e);
-      setSync('offline');
-    }
+    } catch (e) { console.error(e); setSync('offline'); }
   }, delay);
 }
 
@@ -407,34 +330,16 @@ function setSync(status) {
   const el = document.getElementById('syncStatus');
   if (!el) return;
   el.className = 'sync-status ' + status;
-  el.textContent = status === 'syncing' ? '⟳ syncing...' :
-                   status === 'synced' ? '✓ synced' :
-                   status === 'offline' ? '⚠ offline' : '●';
+  el.textContent = status === 'syncing' ? '⟳ syncing...' : status === 'synced' ? '✓ synced' : status === 'offline' ? '⚠ offline' : '●';
 }
 
-// ==================== RENDER ====================
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function addDays(iso, n) {
-  const d = new Date(iso + 'T00:00:00');
-  d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0, 10);
-}
-
-function formatDate(iso) {
-  const d = new Date(iso + 'T00:00:00');
-  return d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' });
-}
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+function addDays(iso, n) { const d = new Date(iso + 'T00:00:00'); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); }
+function formatDate(iso) { const d = new Date(iso + 'T00:00:00'); return d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' }); }
 
 function getDayData(idx) {
   if (!state.data[idx]) {
-    state.data[idx] = {
-      tasks: DEFAULT_PLAN[idx].tasks.map(t => ({ text: t, done: false })),
-      customTasks: [],
-      notes: ''
-    };
+    state.data[idx] = { tasks: DEFAULT_PLAN[idx].tasks.map(t => ({ text: t, done: false })), customTasks: [], notes: '' };
   }
   return state.data[idx];
 }
@@ -458,79 +363,47 @@ function calcStreak() {
   let streak = 0;
   const tIdx = todayIdx();
   if (tIdx < 0) return 0;
-  for (let i = tIdx; i >= 0; i--) {
-    if (dayProgress(i) >= 1) streak++;
-    else break;
-  }
+  for (let i = tIdx; i >= 0; i--) { if (dayProgress(i) >= 1) streak++; else break; }
   if (streak > state.bestStreak) state.bestStreak = streak;
   return streak;
 }
 
 function render() {
   const tIdx = todayIdx();
-  const completed = Object.keys(state.data).filter(k => !isNaN(k) && dayProgress(parseInt(k)) >= 1).length;
-  const totalTasks = DEFAULT_PLAN.reduce((s, _, i) => {
-    const d = getDayData(i);
-    return s + d.tasks.length + (d.customTasks?.length || 0);
-  }, 0);
-  const doneTasks = DEFAULT_PLAN.reduce((s, _, i) => {
-    const d = getDayData(i);
-    return s + d.tasks.filter(t => t.done).length + (d.customTasks?.filter(t => t.done).length || 0);
-  }, 0);
+  const totalTasks = DEFAULT_PLAN.reduce((s, _, i) => { const d = getDayData(i); return s + d.tasks.length + (d.customTasks?.length || 0); }, 0);
+  const doneTasks = DEFAULT_PLAN.reduce((s, _, i) => { const d = getDayData(i); return s + d.tasks.filter(t => t.done).length + (d.customTasks?.filter(t => t.done).length || 0); }, 0);
   const pct = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
   const streak = calcStreak();
-
   document.getElementById('dayNum').textContent = (tIdx + 1) + '/22';
   document.getElementById('overallPct').textContent = pct + '%';
   document.getElementById('streakNum').textContent = streak;
   document.getElementById('bestStreakNum').textContent = state.bestStreak;
   document.getElementById('progressFill').style.width = pct + '%';
-
-  // Days list
   const list = document.getElementById('daysList');
   list.innerHTML = '';
   let lastPhase = '';
   DEFAULT_PLAN.forEach((day, idx) => {
-    // Filter
     if (currentFilter === 'sat' && day.phase !== 'SAT') return;
     if (currentFilter === 'ielts' && day.phase !== 'IELTS') return;
     if (currentFilter === 'today' && idx !== tIdx) return;
     if (currentFilter === 'incomplete' && dayProgress(idx) >= 1) return;
-
     if (day.phase !== lastPhase && currentFilter === 'all') {
-      const h = document.createElement('div');
-      h.className = 'phase-header';
+      const h = document.createElement('div'); h.className = 'phase-header';
       h.textContent = day.phase === 'SAT' ? '🎯 SAT Focus (12 days)' : '🌐 IELTS Focus (10 days)';
-      list.appendChild(h);
-      lastPhase = day.phase;
+      list.appendChild(h); lastPhase = day.phase;
     }
-
     const prog = dayProgress(idx);
     const el = document.createElement('div');
     el.className = 'day' + (idx === tIdx ? ' today' : '') + (prog >= 1 ? ' done' : '');
-    el.innerHTML = `
-      <div class="day-header">
-        <span class="day-title">${day.title}</span>
-        <span class="badge ${day.phase.toLowerCase()}">${day.phase}</span>
-      </div>
-      <div class="day-date">${formatDate(addDays(state.startDate, idx))} • ${Math.round(prog*100)}% done</div>
-      <div class="mini-progress"><div class="mini-fill" style="width:${prog*100}%"></div></div>
-    `;
+    el.innerHTML = `<div class="day-header"><span class="day-title">${day.title}</span><span class="badge ${day.phase.toLowerCase()}">${day.phase}</span></div><div class="day-date">${formatDate(addDays(state.startDate, idx))} • ${Math.round(prog*100)}% done</div><div class="mini-progress"><div class="mini-fill" style="width:${prog*100}%"></div></div>`;
     el.onclick = () => openModal(idx);
     list.appendChild(el);
   });
-
-  // Auto-scroll to today on first render
   if (!window._scrolled && tIdx >= 0) {
-    setTimeout(() => {
-      const todayEl = list.querySelector('.day.today');
-      if (todayEl) todayEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      window._scrolled = true;
-    }, 100);
+    setTimeout(() => { const todayEl = list.querySelector('.day.today'); if (todayEl) todayEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); window._scrolled = true; }, 100);
   }
 }
 
-// ==================== MODAL ====================
 function openModal(idx) {
   currentDayIdx = idx;
   const day = DEFAULT_PLAN[idx];
@@ -541,6 +414,7 @@ function openModal(idx) {
   document.getElementById('dayNotes').value = d.notes || '';
   document.getElementById('modal').classList.add('show');
   document.getElementById('newTaskInput').value = '';
+  renderResources();
 }
 
 function renderTasks() {
@@ -548,25 +422,19 @@ function renderTasks() {
   const list = document.getElementById('tasksList');
   list.innerHTML = '';
   d.tasks.forEach((t, i) => list.appendChild(taskEl(t, () => toggleTask(i, false))));
-  (d.customTasks || []).forEach((t, i) => {
-    list.appendChild(taskEl(t, () => toggleTask(i, true), () => deleteCustomTask(i)));
-  });
+  (d.customTasks || []).forEach((t, i) => { list.appendChild(taskEl(t, () => toggleTask(i, true), () => deleteCustomTask(i))); });
 }
 
 function taskEl(task, onToggle, onDelete) {
   const div = document.createElement('div');
   div.className = 'task' + (task.done ? ' done' : '');
   const id = 'task_' + Math.random().toString(36).slice(2);
-  div.innerHTML = `
-    <input type="checkbox" id="${id}" ${task.done ? 'checked' : ''}>
-    <label for="${id}"></label>
-  `;
+  div.innerHTML = `<input type="checkbox" id="${id}" ${task.done ? 'checked' : ''}><label for="${id}"></label>`;
   div.querySelector('label').textContent = task.text;
   div.querySelector('input').onchange = onToggle;
   if (onDelete) {
     const btn = document.createElement('button');
-    btn.className = 'delete-task';
-    btn.textContent = '✕';
+    btn.className = 'delete-task'; btn.textContent = '✕';
     btn.onclick = (e) => { e.stopPropagation(); onDelete(); };
     div.appendChild(btn);
   }
@@ -578,9 +446,7 @@ function toggleTask(i, isCustom) {
   const arr = isCustom ? d.customTasks : d.tasks;
   arr[i].done = !arr[i].done;
   if (navigator.vibrate) navigator.vibrate(10);
-  saveData();
-  renderTasks();
-  render();
+  saveData(); renderTasks(); render();
   if (dayProgress(currentDayIdx) >= 1) celebrate();
 }
 
@@ -592,21 +458,16 @@ function addCustomTask() {
   if (!d.customTasks) d.customTasks = [];
   d.customTasks.push({ text, done: false });
   input.value = '';
-  saveData();
-  renderTasks();
-  render();
+  saveData(); renderTasks(); render(); renderResources();
 }
 
 function deleteCustomTask(i) {
   const d = getDayData(currentDayIdx);
   d.customTasks.splice(i, 1);
-  saveData();
-  renderTasks();
-  render();
+  saveData(); renderTasks(); render(); renderResources();
 }
 
 function closeModal() {
-  // Save notes
   if (currentDayIdx !== null) {
     const d = getDayData(currentDayIdx);
     d.notes = document.getElementById('dayNotes').value;
@@ -616,29 +477,10 @@ function closeModal() {
   currentDayIdx = null;
 }
 
-// ==================== UI HELPERS ====================
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-function celebrate() {
-  toast('🎉 Day complete!');
-  if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
-}
-
-function applyTheme() {
-  document.documentElement.setAttribute('data-theme', state.theme);
-  document.getElementById('themeBtn').textContent = state.theme === 'dark' ? '🌙' : '☀️';
-}
-
-function toggleTheme() {
-  state.theme = state.theme === 'dark' ? 'light' : 'dark';
-  applyTheme();
-  saveData();
-}
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+function celebrate() { toast('🎉 Day complete!'); if (navigator.vibrate) navigator.vibrate([50, 30, 50]); }
+function applyTheme() { document.documentElement.setAttribute('data-theme', state.theme); document.getElementById('themeBtn').textContent = state.theme === 'dark' ? '🌙' : '☀️'; }
+function toggleTheme() { state.theme = state.theme === 'dark' ? 'light' : 'dark'; applyTheme(); saveData(); }
 
 async function toggleNotif() {
   if (!('Notification' in window)) { toast('Notifications not supported'); return; }
@@ -652,7 +494,6 @@ async function toggleNotif() {
   saveData();
 }
 
-// ==================== EVENTS ====================
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeModal();
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -672,22 +513,14 @@ document.querySelectorAll('.chip').forEach(chip => {
   };
 });
 
-document.getElementById('newTaskInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addCustomTask();
-});
-
+document.getElementById('newTaskInput').addEventListener('keydown', e => { if (e.key === 'Enter') addCustomTask(); });
 document.getElementById('dayNotes').addEventListener('blur', () => {
-  if (currentDayIdx !== null) {
-    getDayData(currentDayIdx).notes = document.getElementById('dayNotes').value;
-    saveData();
-  }
+  if (currentDayIdx !== null) { getDayData(currentDayIdx).notes = document.getElementById('dayNotes').value; saveData(); }
 });
 
-// Realtime sync across devices
 sb.channel('habit_changes')
   .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'habit_data' }, async (payload) => {
     if (currentUser && payload.new.user_id === currentUser.id) {
-      // Skip if it's our own recent update
       const localUpdated = localStorage.getItem('ht5_' + currentUser.id + '_lastWrite');
       if (localUpdated && Date.now() - parseInt(localUpdated) < 2000) return;
       state.data = payload.new.data || {};
@@ -697,21 +530,17 @@ sb.channel('habit_changes')
   })
   .subscribe();
 
-// Daily notification at 9am
 setInterval(() => {
   if (!state.notifications) return;
   const now = new Date();
   if (now.getHours() === 9 && now.getMinutes() === 0 && Notification.permission === 'granted') {
     const tIdx = todayIdx();
     if (tIdx >= 0 && dayProgress(tIdx) < 1) {
-      new Notification('📚 SAT+IELTS Tracker', {
-        body: `Bugun: ${DEFAULT_PLAN[tIdx].title}. Boshla!`
-      });
+      new Notification('📚 SAT+IELTS Tracker', { body: `Bugun: ${DEFAULT_PLAN[tIdx].title}. Boshla!` });
     }
   }
 }, 60000);
 
-// Init
 init();
 </script>
 </body>
