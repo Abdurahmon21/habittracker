@@ -1,1032 +1,717 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<meta name="theme-color" content="#0f0f0f">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SAT + IELTS Tracker</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #222;
-    --border: #2e2e2e; --border2: #3a3a3a;
-    --text: #f0f0f0; --muted: #555; --muted2: #888;
-    --green: #4ade80; --green-bg: #0d2818; --green-border: #1a4a2e;
-    --blue: #60a5fa; --blue-bg: #0d1f3a; --blue-border: #1a3a6e;
-    --amber: #fbbf24; --amber-bg: #1a1200; --amber-border: #3a2e00;
-    --purple: #a78bfa; --purple-bg: #1a0d3a; --purple-border: #2e1a6e;
-    --red: #f87171;
-    --shadow: 0 4px 20px rgba(0,0,0,0.4);
+    --bg: #0a0a0a; --card: #161616; --card-hover: #1f1f1f;
+    --text: #ededed; --text-dim: #888; --border: #2a2a2a;
+    --accent: #3b82f6; --success: #10b981; --warning: #f59e0b;
+    --sat: #8b5cf6; --ielts: #06b6d4;
   }
   [data-theme="light"] {
-    --bg: #fafafa; --surface: #ffffff; --surface2: #f0f0f0;
-    --border: #e5e5e5; --border2: #d4d4d4;
-    --text: #1a1a1a; --muted: #999; --muted2: #666;
-    --green: #16a34a; --green-bg: #dcfce7; --green-border: #86efac;
-    --blue: #2563eb; --blue-bg: #dbeafe; --blue-border: #93c5fd;
-    --amber: #d97706; --amber-bg: #fef3c7; --amber-border: #fcd34d;
-    --purple: #7c3aed; --purple-bg: #ede9fe; --purple-border: #c4b5fd;
-    --red: #dc2626;
-    --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    --bg: #fafafa; --card: #fff; --card-hover: #f3f4f6;
+    --text: #111; --text-dim: #666; --border: #e5e7eb;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html { scroll-behavior: smooth; }
   body {
-    background: var(--bg); color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh; padding: 1.5rem 1rem 4rem;
-    transition: background 0.3s, color 0.3s;
-    -webkit-font-smoothing: antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--text); min-height: 100vh;
+    padding: 20px; transition: background 0.3s, color 0.3s;
   }
-  .container { max-width: 980px; margin: 0 auto; }
-
-  /* Header */
-  header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
-  .header-left h1 { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; }
-  .header-sub { font-size: 12px; color: var(--muted2); margin-top: 4px; font-family: 'DM Mono', monospace; }
-  .header-actions { display: flex; gap: 6px; }
-  .icon-btn {
-    width: 36px; height: 36px; border-radius: 8px;
-    background: var(--surface); border: 1px solid var(--border);
-    color: var(--text); cursor: pointer; font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-  }
-  .icon-btn:hover { background: var(--surface2); border-color: var(--border2); }
-  .icon-btn:active { transform: scale(0.95); }
-  .icon-btn.active { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue); }
-
-  /* Stats */
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 1rem 0; }
-  .stat-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 8px; padding: 10px 12px;
-    transition: transform 0.15s, border-color 0.15s;
-  }
-  .stat-card:hover { transform: translateY(-1px); border-color: var(--border2); }
-  .stat-val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; line-height: 1.1; }
-  .stat-val.green { color: var(--green); }
-  .stat-val.blue { color: var(--blue); }
-  .stat-val.amber { color: var(--amber); }
-  .stat-val.red { color: var(--red); }
-  .stat-label { font-size: 11px; color: var(--muted2); margin-top: 4px; }
-
-  /* Progress */
-  .progress-wrap { margin-bottom: 2rem; }
-  .progress-meta {
-    display: flex; justify-content: space-between;
-    font-size: 12px; color: var(--muted2);
-    font-family: 'DM Mono', monospace; margin-bottom: 6px;
-  }
-  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .progress-fill {
-    height: 100%; background: linear-gradient(90deg, var(--green), var(--blue));
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 2px;
-  }
-
-  /* Filter bar */
-  .filter-bar { display: flex; gap: 6px; margin-bottom: 1.25rem; overflow-x: auto; padding-bottom: 4px; }
-  .filter-bar::-webkit-scrollbar { display: none; }
-  .filter-chip {
-    background: var(--surface); border: 1px solid var(--border);
-    color: var(--muted2); padding: 6px 12px; border-radius: 999px;
-    font-size: 12px; cursor: pointer; white-space: nowrap;
-    transition: all 0.15s; font-family: inherit;
-  }
-  .filter-chip:hover { border-color: var(--border2); color: var(--text); }
-  .filter-chip.active { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue); }
-
-  /* Phases */
-  .phase { margin-bottom: 2rem; }
-  .phase-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; }
-  .phase-tag {
-    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
-    padding: 4px 10px; border-radius: 3px; letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .phase-tag.sat { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
-  .phase-tag.ielts { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
-  .phase-dates { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; }
-
-  .days-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-
-  .day-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px; cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative; outline: none;
-  }
-  .day-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: var(--shadow); }
-  .day-card:focus-visible { border-color: var(--blue); box-shadow: 0 0 0 2px var(--blue-bg); }
-  .day-card.done {
-    background: var(--green-bg); border-color: var(--green-border);
-    animation: doneFlash 0.6s ease;
-  }
-  @keyframes doneFlash {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.03); box-shadow: 0 0 20px var(--green-border); }
-    100% { transform: scale(1); }
-  }
-  .day-card.today {
-    border-color: var(--blue); border-width: 1.5px;
-    box-shadow: 0 0 0 3px rgba(96,165,250,0.1);
-  }
-  .day-card.today::before {
-    content: ''; position: absolute; inset: -1px;
-    border-radius: 10px; padding: 1.5px;
-    background: linear-gradient(135deg, var(--blue), var(--purple));
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude;
-    pointer-events: none; opacity: 0.5;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.7; }
-  }
-  .day-card.past-undone { opacity: 0.35; }
-  .day-card.future { opacity: 0.75; }
-
-  .day-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1px; }
-  .day-num { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; }
-  .day-card.done .day-num { color: var(--green); }
-  .day-month { font-size: 11px; color: var(--muted2); font-family: 'DM Mono', monospace; }
-  .day-wd { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
-  .today-tag {
-    position: absolute; top: 8px; right: 8px;
-    font-size: 9px; color: var(--blue); font-family: 'DM Mono', monospace;
-    font-weight: 500; letter-spacing: 0.06em;
-  }
-  .day-progress-mini {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 2px; background: var(--border); border-radius: 0 0 9px 9px;
-    overflow: hidden;
-  }
-  .day-progress-mini-fill {
-    height: 100%; background: var(--green);
-    transition: width 0.4s ease;
-  }
-
-  .task-pills { display: flex; flex-direction: column; gap: 3px; }
-  .pill {
-    font-size: 10px; padding: 3px 7px; border-radius: 3px;
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    transition: opacity 0.2s;
-  }
-  .pill.sat-e { background: var(--blue-bg); color: #93c5fd; }
-  .pill.sat-m { background: var(--purple-bg); color: #c4b5fd; }
-  .pill.ielts { background: var(--amber-bg); color: #fcd34d; }
-  .pill.custom { background: var(--surface2); color: var(--muted2); border: 1px dashed var(--border2); }
-  .pill.done-pill {
-    background: var(--green-bg); color: #86efac;
-    text-decoration: line-through; opacity: 0.55;
-  }
-  [data-theme="light"] .pill.sat-e { color: #1e40af; }
-  [data-theme="light"] .pill.sat-m { color: #6d28d9; }
-  [data-theme="light"] .pill.ielts { color: #92400e; }
-  [data-theme="light"] .pill.done-pill { color: #166534; }
-
-  /* Modal */
-  .overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
-    z-index: 200; align-items: center; justify-content: center;
-    padding: 1rem; animation: fadeIn 0.2s ease;
-  }
-  .overlay.open { display: flex; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .modal {
-    background: var(--surface); border: 1px solid var(--border2);
-    border-radius: 14px; padding: 1.25rem;
-    width: 100%; max-width: 420px; max-height: 90vh;
-    display: flex; flex-direction: column;
-    box-shadow: var(--shadow);
-    animation: modalSlide 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  @keyframes modalSlide {
-    from { opacity: 0; transform: translateY(20px) scale(0.97); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  .m-header { flex-shrink: 0; margin-bottom: 1rem; }
-  .m-date { font-family: 'DM Mono', monospace; font-size: 18px; font-weight: 500; }
-  .m-sub { font-size: 12px; color: var(--muted2); margin-top: 3px; font-family: 'DM Mono', monospace; }
-
-  .m-body { flex: 1; overflow-y: auto; margin: 0 -0.5rem; padding: 0 0.5rem; }
-  .m-body::-webkit-scrollbar { width: 4px; }
-  .m-body::-webkit-scrollbar-track { background: transparent; }
-  .m-body::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-  .m-section { margin-bottom: 1rem; }
-  .m-section-title {
-    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--muted); font-family: 'DM Mono', monospace;
-    margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--border);
+  .container { max-width: 900px; margin: 0 auto; }
+  header {
     display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
   }
-  .m-section-count { color: var(--muted2); font-weight: 500; }
-
-  .m-task {
+  h1 { font-size: 28px; font-weight: 700; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  button {
+    background: var(--card); color: var(--text); border: 1px solid var(--border);
+    padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px;
+    transition: all 0.2s;
+  }
+  button:hover { background: var(--card-hover); transform: translateY(-1px); }
+  button.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .user-bar {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--card); padding: 10px 16px; border-radius: 10px;
+    border: 1px solid var(--border); margin-bottom: 20px; font-size: 14px;
+  }
+  .user-bar .email { color: var(--text-dim); flex: 1; }
+  .sync-status { font-size: 12px; color: var(--text-dim); }
+  .sync-status.syncing { color: var(--warning); }
+  .sync-status.synced { color: var(--success); }
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 24px;
+  }
+  .stat {
+    background: var(--card); padding: 16px; border-radius: 12px;
+    border: 1px solid var(--border); text-align: center;
+  }
+  .stat .value { font-size: 24px; font-weight: 700; }
+  .stat .label { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+  .progress-bar {
+    height: 8px; background: var(--card); border-radius: 4px;
+    overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--sat), var(--ielts));
+    transition: width 0.5s;
+  }
+  .filters {
+    display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .chip {
+    padding: 6px 12px; border-radius: 20px; font-size: 13px;
+    cursor: pointer; border: 1px solid var(--border); background: var(--card);
+  }
+  .chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .phase-header {
+    font-size: 13px; font-weight: 600; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 1px; margin: 20px 0 10px;
+  }
+  .day {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; margin-bottom: 10px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .day:hover { background: var(--card-hover); border-color: var(--accent); }
+  .day.today { border-color: var(--accent); border-width: 2px; }
+  .day.done { opacity: 0.6; }
+  .day-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px; flex-wrap: wrap; gap: 8px;
+  }
+  .day-title { font-weight: 600; font-size: 15px; }
+  .day-date { font-size: 12px; color: var(--text-dim); }
+  .badge {
+    padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  }
+  .badge.sat { background: rgba(139, 92, 246, 0.2); color: var(--sat); }
+  .badge.ielts { background: rgba(6, 182, 212, 0.2); color: var(--ielts); }
+  .mini-progress {
+    height: 4px; background: var(--border); border-radius: 2px;
+    overflow: hidden; margin-top: 8px;
+  }
+  .mini-fill { height: 100%; background: var(--accent); transition: width 0.3s; }
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    display: none; align-items: center; justify-content: center;
+    z-index: 100; padding: 20px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--card); border-radius: 16px; padding: 24px;
+    max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
+    border: 1px solid var(--border);
+  }
+  .modal h2 { margin-bottom: 16px; }
+  .task {
     display: flex; align-items: flex-start; gap: 10px;
-    padding: 10px 0; border-bottom: 1px solid var(--border);
-    transition: opacity 0.2s;
+    padding: 10px; border-radius: 8px; margin-bottom: 6px;
+    cursor: pointer; transition: background 0.2s;
   }
-  .m-task:last-child { border-bottom: none; }
-  .m-check {
-    width: 20px; height: 20px; border-radius: 5px;
-    border: 1.5px solid var(--border2);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px; cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  .task:hover { background: var(--card-hover); }
+  .task input[type="checkbox"] {
+    width: 18px; height: 18px; cursor: pointer; flex-shrink: 0;
   }
-  .m-check:hover { border-color: var(--green); }
-  .m-check.on {
-    background: var(--green); border-color: var(--green);
-    transform: scale(1.05);
+  .task label { cursor: pointer; flex: 1; font-size: 14px; }
+  .task.done label { text-decoration: line-through; color: var(--text-dim); }
+  .task .delete-task {
+    background: transparent; border: none; color: var(--text-dim);
+    cursor: pointer; padding: 2px 6px; opacity: 0; transition: opacity 0.2s;
   }
-  .m-check.on::after {
-    content: '✓'; font-size: 13px; color: #000; font-weight: 700;
-    animation: checkPop 0.3s ease;
+  .task:hover .delete-task { opacity: 1; }
+  .add-task-row {
+    display: flex; gap: 8px; margin-top: 10px;
   }
-  @keyframes checkPop {
-    0% { transform: scale(0); }
-    60% { transform: scale(1.3); }
-    100% { transform: scale(1); }
+  .add-task-row input {
+    flex: 1; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 14px;
   }
-  .m-task-content { flex: 1; min-width: 0; }
-  .m-task-label { font-size: 13px; line-height: 1.45; cursor: pointer; word-wrap: break-word; }
-  .m-task.checked .m-task-label { color: var(--muted2); text-decoration: line-through; }
-  .m-task-link {
-    display: inline-block; margin-top: 4px;
-    font-size: 11px; color: var(--blue); text-decoration: none;
-    font-family: 'DM Mono', monospace;
+  textarea.notes {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); padding: 10px; border-radius: 8px; font-size: 14px;
+    min-height: 80px; margin-top: 12px; resize: vertical; font-family: inherit;
   }
-  .m-task-link:hover { text-decoration: underline; }
-  .m-task-tip {
-    font-size: 11px; color: var(--muted2); margin-top: 4px;
-    line-height: 1.45;
+  .modal-actions {
+    display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;
   }
-  .m-task-note {
-    margin-top: 6px; width: 100%;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 6px; padding: 6px 8px;
-    font-family: inherit; font-size: 12px; color: var(--text);
-    resize: vertical; min-height: 32px; max-height: 100px;
-    transition: border-color 0.15s;
+  .login-screen {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 80vh; gap: 20px; text-align: center;
   }
-  .m-task-note:focus { outline: none; border-color: var(--blue); }
-  .m-task-delete {
-    background: none; border: none; color: var(--muted);
-    cursor: pointer; padding: 4px; font-size: 14px;
-    flex-shrink: 0; transition: color 0.15s;
+  .login-screen h1 { font-size: 36px; }
+  .login-screen p { color: var(--text-dim); max-width: 400px; }
+  .google-btn {
+    background: white; color: #333; padding: 12px 24px;
+    border-radius: 10px; font-weight: 600; display: flex;
+    align-items: center; gap: 10px; border: none; font-size: 15px;
   }
-  .m-task-delete:hover { color: var(--red); }
-
-  .m-add-task {
-    width: 100%; margin-top: 6px; padding: 8px;
-    background: transparent; border: 1px dashed var(--border2);
-    border-radius: 6px; color: var(--muted2); font-size: 12px;
-    cursor: pointer; font-family: inherit;
-    transition: all 0.15s;
-  }
-  .m-add-task:hover { border-color: var(--blue); color: var(--blue); }
-
-  .m-footer {
-    display: flex; gap: 8px; margin-top: 1rem;
-    flex-shrink: 0; padding-top: 1rem;
-    border-top: 1px solid var(--border);
-  }
-  .btn {
-    flex: 1; padding: 10px; border-radius: 8px;
-    font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500;
-    cursor: pointer; border: 1px solid var(--border2);
-    background: transparent; color: var(--text);
-    transition: all 0.15s;
-  }
-  .btn:hover { background: var(--surface2); }
-  .btn:active { transform: scale(0.98); }
-  .btn.g { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
-  .btn.g:hover { background: var(--green-border); }
-
-  /* Toast */
   .toast {
-    position: fixed; bottom: 1.5rem; left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: var(--surface); border: 1px solid var(--border2);
-    color: var(--text); padding: 10px 16px; border-radius: 999px;
-    font-size: 13px; box-shadow: var(--shadow);
-    z-index: 300; opacity: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--card); border: 1px solid var(--border);
+    padding: 12px 20px; border-radius: 10px; z-index: 200;
+    opacity: 0; transition: opacity 0.3s, transform 0.3s;
   }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.success { border-color: var(--green-border); color: var(--green); }
-
-  /* Confetti container */
-  .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 250; overflow: hidden; }
-  .confetti-piece {
-    position: absolute; width: 8px; height: 8px;
-    animation: confettiFall 2.5s ease-out forwards;
-  }
-  @keyframes confettiFall {
-    0% { transform: translateY(-20vh) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-  }
-
-  /* MOBILE RESPONSIVE */
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(-10px); }
+  .hidden { display: none !important; }
   @media (max-width: 640px) {
-    body { padding: 1rem 0.75rem 3rem; }
-    header { flex-direction: row; align-items: center; gap: 0.5rem; }
-    .header-left h1 { font-size: 17px; }
-    .header-sub { font-size: 11px; }
-    .icon-btn { width: 34px; height: 34px; font-size: 14px; }
-    .stats-row { grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    .stat-val { font-size: 17px; }
-    .stat-label { font-size: 10px; }
-    .days-grid { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 6px; }
-    .day-card { padding: 9px; border-radius: 8px; }
-    .day-num { font-size: 16px; }
-    .day-month, .day-wd { font-size: 10px; }
-    .pill { font-size: 9px; padding: 2px 5px; }
-    .filter-chip { font-size: 11px; padding: 5px 10px; }
-    .modal { padding: 1rem; border-radius: 12px; max-height: 92vh; }
-    .m-date { font-size: 16px; }
-    .btn { padding: 11px; font-size: 13px; }
-    .phase-header { gap: 6px; }
-    .phase-tag { font-size: 9px; padding: 3px 8px; }
-    .phase-dates { font-size: 11px; }
+    body { padding: 12px; }
+    h1 { font-size: 22px; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stat .value { font-size: 20px; }
   }
-
   @media (max-width: 380px) {
-    .days-grid { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  /* Reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      transition-duration: 0.01ms !important;
-    }
+    .stats { grid-template-columns: 1fr 1fr; gap: 8px; }
   }
 </style>
 </head>
 <body>
-<div class="container">
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-screen">
+  <h1>📚 SAT + IELTS Tracker</h1>
+  <p>22 kunlik intensiv reja. Google bilan kirib, ma'lumotlaringizni har qanday qurilmada sinxronlashtiring.</p>
+  <button class="google-btn" onclick="loginGoogle()">
+    <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    Sign in with Google
+  </button>
+</div>
+
+<!-- APP -->
+<div id="app" class="container hidden">
   <header>
-    <div class="header-left">
-      <h1>SAT + IELTS Tracker</h1>
-      <div class="header-sub" id="header-sub"></div>
-    </div>
-    <div class="header-actions">
-      <button class="icon-btn" id="btn-theme" title="Tema (T)" aria-label="Tema almashtirish">🌙</button>
-      <button class="icon-btn" id="btn-notif" title="Eslatma (N)" aria-label="Eslatma">🔔</button>
-      <button class="icon-btn" id="btn-reset" title="Tozalash" aria-label="Hammasini tozalash">↺</button>
+    <h1>📚 SAT + IELTS Tracker</h1>
+    <div class="controls">
+      <button id="themeBtn" title="Theme (T)">🌙</button>
+      <button id="notifBtn" title="Notifications (N)">🔔</button>
+      <button onclick="logout()">Logout</button>
     </div>
   </header>
 
-  <div class="stats-row" id="stats"></div>
-
-  <div class="progress-wrap">
-    <div class="progress-meta">
-      <span id="p-label"></span>
-      <span id="p-pct"></span>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" id="p-fill" style="width:0%"></div></div>
+  <div class="user-bar">
+    <span>👤</span>
+    <span class="email" id="userEmail"></span>
+    <span class="sync-status" id="syncStatus">●</span>
   </div>
 
-  <div class="filter-bar" role="tablist">
-    <button class="filter-chip active" data-filter="all" role="tab">Hammasi</button>
-    <button class="filter-chip" data-filter="today" role="tab">Bugun</button>
-    <button class="filter-chip" data-filter="undone" role="tab">Bajarilmagan</button>
-    <button class="filter-chip" data-filter="done" role="tab">Bajarilgan</button>
+  <div class="stats">
+    <div class="stat"><div class="value" id="dayNum">0/22</div><div class="label">Day</div></div>
+    <div class="stat"><div class="value" id="overallPct">0%</div><div class="label">Overall</div></div>
+    <div class="stat"><div class="value" id="streakNum">0</div><div class="label">Streak 🔥</div></div>
+    <div class="stat"><div class="value" id="bestStreakNum">0</div><div class="label">Best</div></div>
   </div>
 
-  <div id="phases"></div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="filters">
+    <div class="chip active" data-filter="all">All</div>
+    <div class="chip" data-filter="sat">SAT</div>
+    <div class="chip" data-filter="ielts">IELTS</div>
+    <div class="chip" data-filter="today">Today</div>
+    <div class="chip" data-filter="incomplete">Incomplete</div>
+  </div>
+
+  <div id="daysList"></div>
 </div>
 
-<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="m-date">
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
   <div class="modal">
-    <div class="m-header">
-      <div class="m-date" id="m-date"></div>
-      <div class="m-sub" id="m-sub"></div>
+    <h2 id="modalTitle">Day</h2>
+    <div id="modalDate" style="color: var(--text-dim); font-size: 13px; margin-bottom: 16px;"></div>
+    <div id="tasksList"></div>
+    <div class="add-task-row">
+      <input type="text" id="newTaskInput" placeholder="Add custom task..." />
+      <button class="primary" onclick="addCustomTask()">Add</button>
     </div>
-    <div class="m-body" id="m-body"></div>
-    <div class="m-footer">
-      <button class="btn" id="btn-close">Yopish (Esc)</button>
-      <button class="btn g" id="btn-all">Barchasini ✓</button>
+    <textarea class="notes" id="dayNotes" placeholder="Notes for this day..."></textarea>
+    <div class="modal-actions">
+      <button onclick="closeModal()">Close (Esc)</button>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="confetti" id="confetti"></div>
 
 <script>
-'use strict';
+// ==================== CONFIG ====================
+const SUPABASE_URL = 'https://zpifggpsmacyszldjkih.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwaWZnZ3BzbWFjeXN6bGRqa2loIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5ODI3NDgsImV4cCI6MjA5NTU1ODc0OH0.4VERNKvlU42qJTyvxE14CjeCgz--pKbs_aGnLi-aDBk';
 
-// ============ CONSTANTS ============
-const MONTHS = ['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
-const MONTHS_FULL = ['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
-const WD = ['Yakshanba','Dushanba','Seshanba','Chorshanba','Payshanba','Juma','Shanba'];
-const WDS = ['Yak','Dush','Sesh','Chor','Pay','Jum','Shan'];
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// Sanani avtomatik hisoblash — kelajakdagi 22 kun
-function getStartDate() {
-  const saved = localStorage.getItem('ht5_start');
-  if (saved) return new Date(parseInt(saved));
-  const d = new Date(); d.setHours(0,0,0,0);
-  localStorage.setItem('ht5_start', d.getTime().toString());
-  return d;
-}
-
-// ============ TASK BANKS ============
-const SAT_ENGLISH = [
-  { label: 'Grammar: Tenses — 20 ta savol', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions > Verb tenses' },
-  { label: 'Grammar: Subject-verb agreement', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions > Agreement' },
-  { label: 'Grammar: Punctuation & structure', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions > Punctuation' },
-  { label: 'Grammar: Pronouns & modifiers', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions > Pronouns' },
-  { label: 'Grammar: Transitions & rhetoric', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Expression of Ideas > Transitions' },
-  { label: 'SAT Reading: 1 ta to\u2019liq passage', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Information & Ideas' },
-  { label: 'Grammar: Mixed test — 25 savol', type: 'sat-e', url: 'https://www.oneprep.xyz/question-rush', tip: 'Question Rush — timed mode ni yoq' },
-  { label: 'SAT Reading: Inference savollar', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Inference' },
-  { label: 'Grammar: Word choice & concision', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Expression of Ideas > Word choice' },
-  { label: 'SAT Reading: Timed passage (9 min)', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Stopwatch qo\u2019y, 9 daqiqada 1 passage tugat' },
-  { label: 'Grammar: Parallel structure', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Writing > Standard English Conventions' },
-  { label: 'SAT English: Full section mock', type: 'sat-e', url: 'https://www.oneprep.xyz/predicted-papers', tip: 'To\u2019liq test — rasmiy vaqt bilan' },
+// ==================== DEFAULT PLAN ====================
+const DEFAULT_PLAN = [
+  // SAT Focus — 12 days
+  { phase: 'SAT', title: 'SAT Day 1 — Reading basics', tasks: ['Read 1 SAT passage', '20 vocab words', '10 Reading questions', 'Review mistakes'] },
+  { phase: 'SAT', title: 'SAT Day 2 — Grammar rules', tasks: ['Punctuation rules', '15 grammar questions', '20 vocab words', 'Error log'] },
+  { phase: 'SAT', title: 'SAT Day 3 — Math no-calc', tasks: ['Algebra practice', '15 problems', 'Formula review', 'Mistake review'] },
+  { phase: 'SAT', title: 'SAT Day 4 — Reading deep', tasks: ['2 passages', 'Evidence questions', '20 vocab', 'Timed practice'] },
+  { phase: 'SAT', title: 'SAT Day 5 — Writing transitions', tasks: ['Transition rules', '15 questions', '20 vocab', 'Re-do mistakes'] },
+  { phase: 'SAT', title: 'SAT Day 6 — Math calc', tasks: ['Word problems', '15 problems', 'Graph reading', 'Mistake log'] },
+  { phase: 'SAT', title: 'SAT Day 7 — Full Reading section', tasks: ['Timed 65-min', 'Review answers', '20 vocab', 'Note weak areas'] },
+  { phase: 'SAT', title: 'SAT Day 8 — Full Writing section', tasks: ['Timed 35-min', 'Review answers', 'Rule review', 'Mistake log'] },
+  { phase: 'SAT', title: 'SAT Day 9 — Full Math section', tasks: ['No-calc 25min', 'Calc 55min', 'Review', 'Formula review'] },
+  { phase: 'SAT', title: 'SAT Day 10 — Mixed review', tasks: ['Weak areas', '30 mixed Qs', '20 vocab', 'Mistake patterns'] },
+  { phase: 'SAT', title: 'SAT Day 11 — Full mock test', tasks: ['Full 3-hour test', 'Score it', 'Detailed review', 'Goal: improve'] },
+  { phase: 'SAT', title: 'SAT Day 12 — Final review', tasks: ['Review all mistakes', 'Weak spots only', 'Light practice', 'Rest well'] },
+  // IELTS Focus — 10 days
+  { phase: 'IELTS', title: 'IELTS Day 1 — Listening intro', tasks: ['1 listening test', 'Note types of Qs', 'Review answers', 'Vocab list'] },
+  { phase: 'IELTS', title: 'IELTS Day 2 — Reading skim/scan', tasks: ['1 passage', 'Skim techniques', 'T/F/NG practice', '20 vocab'] },
+  { phase: 'IELTS', title: 'IELTS Day 3 — Writing Task 1', tasks: ['Graph description', 'Structure review', '1 full essay', 'Self-edit'] },
+  { phase: 'IELTS', title: 'IELTS Day 4 — Writing Task 2', tasks: ['Essay structure', '1 full essay', 'Linking words', 'Self-edit'] },
+  { phase: 'IELTS', title: 'IELTS Day 5 — Speaking Part 1', tasks: ['Common topics', '15-min practice', 'Record yourself', 'Review'] },
+  { phase: 'IELTS', title: 'IELTS Day 6 — Speaking Part 2', tasks: ['Cue cards x3', '2-min answers', 'Record', 'Vocab boost'] },
+  { phase: 'IELTS', title: 'IELTS Day 7 — Listening full', tasks: ['Full 30-min test', 'All 4 sections', 'Review', 'Note weak parts'] },
+  { phase: 'IELTS', title: 'IELTS Day 8 — Reading full', tasks: ['Full 60-min test', 'All 3 passages', 'Review', 'Time strategy'] },
+  { phase: 'IELTS', title: 'IELTS Day 9 — Writing both tasks', tasks: ['Task 1 + Task 2 timed', 'Self-score', 'Review', 'Vocab boost'] },
+  { phase: 'IELTS', title: 'IELTS Day 10 — Full mock', tasks: ['Full IELTS test', 'Score it', 'Final review', 'Rest'] }
 ];
 
-const SAT_ENGLISH2 = [
-  { label: 'Reading: Vocabulary in context', type: 'sat-e', url: 'https://www.oneprep.xyz/vocab', tip: 'Vocab section — SAT wordbank' },
-  { label: 'Reading: Evidence-based questions', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Command of Evidence' },
-  { label: 'Reading: Science passage', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Science texts' },
-  { label: 'Reading: History passage', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > History texts' },
-  { label: 'Reading: Paired passages', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Paired texts' },
-  { label: 'Reading: Main idea & purpose', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Central Ideas' },
-  { label: 'Reading: Data interpretation', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Reading > Charts & graphs' },
-  { label: 'Xatolarni tahlil — oxirgi 2 kun', type: 'sat-e', url: 'https://www.oneprep.xyz/predicted-papers', tip: 'Review qismiga o\u2019t, nima uchun xato deb qayta o\u2019qi' },
-  { label: 'Vocab: 20 ta SAT so\u2019z', type: 'sat-e', url: 'https://www.oneprep.xyz/vocab/wordbank', tip: 'Har so\u2019zni kontekstda o\u2019qi, yod olma' },
-  { label: 'Reading: 2 ta qisqa passage', type: 'sat-e', url: 'https://www.oneprep.xyz/question-bank', tip: 'Tez o\u2019qi, asosiy gapni topi' },
-  { label: 'Challenge questions — English', type: 'sat-e', url: 'https://www.oneprep.xyz/challenge-questions', tip: 'Eng qiyin savolar — 750+ uchun' },
-  { label: 'Diagnostic test — English qismi', type: 'sat-e', url: 'https://www.oneprep.xyz/diagnostic', tip: 'Zaif joylarni aniq ko\u2019rish uchun' },
-];
-
-const SAT_MATH = [
-  { label: 'Math: Linear equations — 15 savol', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Algebra > Linear equations' },
-  { label: 'Math: Systems of equations', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Algebra > Systems' },
-  { label: 'Math: Quadratic functions', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Advanced Math > Quadratics' },
-  { label: 'Math: Ratios & proportions', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Problem Solving > Ratios' },
-  { label: 'Math: Percentages & word problems', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Problem Solving > Percentages' },
-  { label: 'Math: Statistics & data analysis', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Problem Solving > Statistics' },
-  { label: 'Math: Geometry — areas & angles', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Geometry' },
-  { label: 'Math: Functions & graphs', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Advanced Math > Functions' },
-  { label: 'Math: Exponents & radicals', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Advanced Math > Exponents' },
-  { label: 'Math: Inequalities', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Algebra > Inequalities' },
-  { label: 'Math: Hard problems (level 4-5)', type: 'sat-m', url: 'https://www.oneprep.xyz/challenge-questions', tip: 'Challenge questions — Math filter' },
-  { label: 'Math: Full section mock', type: 'sat-m', url: 'https://www.oneprep.xyz/predicted-papers', tip: 'To\u2019liq math section — rasmiy vaqt' },
-];
-
-const SAT_MATH2 = [
-  { label: 'Math: Khan Academy unit test', type: 'sat-m', url: 'https://www.khanacademy.org/test-prep/v2-sat-math', tip: 'Bitta unit tugat, xatolarni ko\u2019r' },
-  { label: 'Math: Xatolarni tahlil qil', type: 'sat-m', url: 'https://www.oneprep.xyz/predicted-papers', tip: 'Review — nima uchun xato, formulani yoz' },
-  { label: 'Math: Timed 15 savol (18 daqiqa)', type: 'sat-m', url: 'https://www.oneprep.xyz/question-rush', tip: 'Question Rush — Math — timed mode' },
-  { label: 'Math: Word problem sprint', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Problem Solving — 10 ta' },
-  { label: 'Math: No-calc questions', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > No calculator section' },
-  { label: 'Math: College Board free test', type: 'sat-m', url: 'https://satsuite.collegeboard.org/digital/digital-practice-preparation/practice-tests', tip: 'Official CB practice test — bepul' },
-  { label: 'Math: Grid-in questions', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Student-produced response' },
-  { label: 'Math: Algebra sprint — 20 ta', type: 'sat-m', url: 'https://www.oneprep.xyz/question-rush', tip: 'Question Rush — Algebra category' },
-  { label: 'Math: Score booster drill', type: 'sat-m', url: 'https://www.oneprep.xyz/challenge-questions', tip: '750 dan yuqori uchun challenge questions' },
-  { label: 'Math: Geometry full set', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Geometry & Trigonometry' },
-  { label: 'Math: Trig basics', type: 'sat-m', url: 'https://www.oneprep.xyz/question-bank', tip: 'Filter: Math > Geometry > Trigonometry' },
-  { label: 'Math: Final timed drill', type: 'sat-m', url: 'https://www.oneprep.xyz/question-rush', tip: 'Question Rush — Mixed math — max tezlik' },
-];
-
-const IELTS_TASKS = [
-  { label: 'Listening: Section 1 + tahlil', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-listening/', tip: 'Answers ni tekshirib, eshitmagan joylarda script o\u2019qi' },
-  { label: 'Listening: Section 2 + xatolar', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-listening/', tip: 'Map/diagram savollariga e\u2019tibor ber' },
-  { label: 'Listening: Section 3 + tahlil', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-listening/', tip: 'Academic discussion — so\u2019zlarni oldindan o\u2019qi' },
-  { label: 'Listening: Section 4 + xatolar', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-listening/', tip: 'Eng qiyin section — lecture style' },
-  { label: 'Writing Task 2: Argument essay', type: 'ielts', url: 'https://www.ieltsadvantage.com/writing-task-2/', tip: 'Intro + 2 body + conclusion. 250+ so\u2019z' },
-  { label: 'Writing Task 2: Discussion essay', type: 'ielts', url: 'https://www.ieltsadvantage.com/writing-task-2/', tip: 'Ikki tomonni ko\u2019rsatib, o\u2019z fikrini ayt' },
-  { label: 'Writing Task 1: Graph describe', type: 'ielts', url: 'https://www.ieltsadvantage.com/writing-task-1/', tip: 'Overview + trends. 150+ so\u2019z. Raqamlar muhim' },
-  { label: 'Writing: Essay qayta yozish', type: 'ielts', url: 'https://www.ieltsadvantage.com/writing-task-2/', tip: 'Kechagi essayni grammar xatolarini tuzat, qayta yoz' },
-  { label: 'Reading: Passage 1 + tahlil', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-reading/', tip: 'True/False/NG — qoidani yaxshi bil' },
-  { label: 'Reading: Passage 2 + xatolar', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-reading/', tip: 'Matching headings — skim first, detail later' },
-  { label: 'Reading: Passage 3 — timed', type: 'ielts', url: 'https://www.ieltspractice.com/ielts-reading/', tip: '20 daqiqa — passage 3 eng qiyin' },
-  { label: 'Reading: Skimming & scanning drill', type: 'ielts', url: 'https://ieltsliz.com/ielts-reading-skills/', tip: 'Ieltsliz — reading tips sahifasi' },
-  { label: 'Speaking: Part 1 — record & listen', type: 'ielts', url: 'https://ieltsliz.com/ielts-speaking-part-1/', tip: 'Telefonga yozib ol, qayta tingli — qayerda to\u2019xtatasan?' },
-  { label: 'Speaking: Part 2 — cue card (2 min)', type: 'ielts', url: 'https://ieltsliz.com/ielts-speaking-part-2/', tip: '1 daqiqa tayyorla, 2 daqiqa gapir. Yozib ol' },
-  { label: 'Speaking: Part 3 — abstract Qs', type: 'ielts', url: 'https://ieltsliz.com/ielts-speaking-part-3/', tip: 'Sabab ko\u2019rsat, misol kel, xulosa qil' },
-  { label: 'Grammar: Tenses drill — 20 ta', type: 'ielts', url: 'https://www.perfect-english-grammar.com/tenses.html', tip: 'Past perfect va present perfect muhim' },
-  { label: 'Grammar: Articles & Prepositions', type: 'ielts', url: 'https://www.perfect-english-grammar.com/articles.html', tip: 'a/an/the + in/on/at — eng ko\u2019p xato' },
-  { label: 'Vocabulary: 20 ta academic word', type: 'ielts', url: 'https://www.vocabulary.com/lists/52473', tip: 'Academic Word List — kontekstda o\u2019rgan' },
-  { label: 'Mock: Listening + Reading (full)', type: 'ielts', url: 'https://www.ieltspractice.com/', tip: 'To\u2019liq test — rasmiy vaqt, telefon yo\u2019q' },
-  { label: 'Writing feedback — menga yubor', type: 'ielts', url: '', tip: 'Claude ga essay yubor — tuzatib beraman' },
-];
-
-// ============ STATE ============
-const START = getStartDate();
-const PHASE1_LEN = 12; // First 12 days = SAT focus
-const TOTAL_DAYS = 22;
-
-const days = [];
-for (let i = 0; i < TOTAL_DAYS; i++) {
-  const d = new Date(START);
-  d.setDate(START.getDate() + i);
-  const isPhase1 = i < PHASE1_LEN;
-  days.push({ date: d, isPhase1, idx: i, tasks: getDayTasks(i, isPhase1) });
-}
-
-function getDayTasks(idx, isPhase1) {
-  if (isPhase1) {
-    return [
-      SAT_ENGLISH[idx % SAT_ENGLISH.length],
-      SAT_ENGLISH2[idx % SAT_ENGLISH2.length],
-      SAT_MATH[idx % SAT_MATH.length],
-      SAT_MATH2[idx % SAT_MATH2.length],
-      IELTS_TASKS[idx % IELTS_TASKS.length],
-    ];
-  }
-  return [0,1,2,3,4].map(i => IELTS_TASKS[(idx * 5 + i) % IELTS_TASKS.length]);
-}
-
-let todayDate = new Date(); todayDate.setHours(0,0,0,0);
-let openIdx = null;
+// ==================== STATE ====================
+let state = {
+  data: {},          // { dayIndex: { tasks: [{text, done}], notes, customTasks: [{text, done}] } }
+  startDate: null,
+  theme: 'dark',
+  notifications: false,
+  bestStreak: 0
+};
+let currentUser = null;
+let currentDayIdx = null;
 let currentFilter = 'all';
+let saveTimer = null;
 
-// ============ DATE HELPERS ============
-function dayKey(date) {
-  const x = new Date(date); x.setHours(0,0,0,0);
-  return x.getTime();
-}
-function isToday(d) { return dayKey(d) === dayKey(todayDate); }
-function isPast(d) { return dayKey(d) < dayKey(todayDate); }
-function isFuture(d) { return dayKey(d) > dayKey(todayDate); }
-
-// Tunni kuzatib turish — kun o'zgarsa yangilash
-setInterval(() => {
-  const now = new Date(); now.setHours(0,0,0,0);
-  if (now.getTime() !== todayDate.getTime()) {
-    todayDate = now;
-    render();
-  }
-}, 60000);
-
-// ============ STORAGE ============
-const KEY = 'ht5';
-function loadAll() {
-  try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
-  catch(e) { return {}; }
-}
-function saveAll(data) {
-  try { localStorage.setItem(KEY, JSON.stringify(data)); return true; }
-  catch(e) { toast('Saqlashda xato — joy yetmagan', 'error'); return false; }
-}
-function getDay(i) {
-  const all = loadAll();
-  return all['d' + i] || { checked: [], notes: {}, custom: [] };
-}
-function setDay(i, dayData) {
-  const all = loadAll();
-  all['d' + i] = dayData;
-  saveAll(all);
-}
-function getAllTasks(i) {
-  return [...days[i].tasks, ...(getDay(i).custom || [])];
-}
-function isDayDone(i) {
-  const d = getDay(i);
-  const total = days[i].tasks.length + (d.custom?.length || 0);
-  return total > 0 && d.checked.length >= total;
-}
-
-// ============ STATS ============
-function calcStats() {
-  let doneDays = 0, doneTasks = 0, totalTasks = 0;
-  days.forEach((_, i) => {
-    if (isDayDone(i)) doneDays++;
-    const d = getDay(i);
-    doneTasks += d.checked.length;
-    totalTasks += days[i].tasks.length + (d.custom?.length || 0);
-  });
-
-  // Streak — only counts past + today
-  let streak = 0;
-  for (let i = days.length - 1; i >= 0; i--) {
-    if (isFuture(days[i].date)) continue;
-    if (isDayDone(i)) streak++;
-    else if (isPast(days[i].date)) break;
-    else break; // today undone
-  }
-
-  // Best streak
-  let best = 0, current = 0;
-  days.forEach((day, i) => {
-    if (isFuture(day.date)) return;
-    if (isDayDone(i)) { current++; if (current > best) best = current; }
-    else current = 0;
-  });
-
-  return { doneDays, doneTasks, totalTasks, streak, best };
-}
-
-// ============ RENDER ============
-function render() {
-  const stats = calcStats();
-  const pct = days.length ? Math.round(stats.doneDays / days.length * 100) : 0;
-
-  // Header sub — sana oralig'i
-  const startStr = `${START.getDate()}-${MONTHS[START.getMonth()]}`;
-  const endStr = `${days[days.length-1].date.getDate()}-${MONTHS[days[days.length-1].date.getMonth()]}`;
-  document.getElementById('header-sub').textContent = `${startStr} — ${endStr} · ${TOTAL_DAYS} kun`;
-
-  // Stats
-  document.getElementById('stats').innerHTML = `
-    <div class="stat-card"><div class="stat-val green">${stats.doneDays}</div><div class="stat-label">Kun bajarildi</div></div>
-    <div class="stat-card"><div class="stat-val blue">${stats.doneTasks}/${stats.totalTasks}</div><div class="stat-label">Vazifalar</div></div>
-    <div class="stat-card"><div class="stat-val amber">${stats.streak > 0 ? stats.streak + ' 🔥' : '0'}</div><div class="stat-label">Streak (best: ${stats.best})</div></div>
-    <div class="stat-card"><div class="stat-val red">${Math.max(0, days.length - stats.doneDays)}</div><div class="stat-label">Qolgan kun</div></div>
-  `;
-
-  // Progress
-  document.getElementById('p-fill').style.width = pct + '%';
-  document.getElementById('p-label').textContent = `${stats.doneDays} / ${days.length} kun`;
-  document.getElementById('p-pct').textContent = pct + '%';
-
-  // Phases
-  const p1 = days.filter(d => d.isPhase1);
-  const p2 = days.filter(d => !d.isPhase1);
-  const phases = [
-    { label: 'SAT Focus', dates: phaseRange(p1), tag: 'sat', days: p1, offset: 0 },
-    { label: 'IELTS Focus', dates: phaseRange(p2), tag: 'ielts', days: p2, offset: p1.length }
-  ];
-
-  const phasesEl = document.getElementById('phases');
-  phasesEl.innerHTML = '';
-  phases.forEach(ph => {
-    const el = document.createElement('div');
-    el.className = 'phase';
-    el.innerHTML = `<div class="phase-header">
-      <span class="phase-tag ${ph.tag}">${ph.label}</span>
-      <span class="phase-dates">${ph.dates}</span>
-    </div><div class="days-grid" id="g${ph.offset}"></div>`;
-    phasesEl.appendChild(el);
-    const grid = el.querySelector('.days-grid');
-
-    ph.days.forEach((day, j) => {
-      const i = ph.offset + j;
-
-      // Filter
-      if (currentFilter === 'today' && !isToday(day.date)) return;
-      if (currentFilter === 'done' && !isDayDone(i)) return;
-      if (currentFilter === 'undone' && isDayDone(i)) return;
-
-      const d = getDay(i);
-      const totalT = days[i].tasks.length + (d.custom?.length || 0);
-      const done = isDayDone(i);
-      const tod = isToday(day.date);
-      const past = isPast(day.date);
-      const fut = isFuture(day.date);
-
-      const card = document.createElement('div');
-      card.className = 'day-card'
-        + (done ? ' done' : '')
-        + (tod ? ' today' : '')
-        + (past && !done ? ' past-undone' : '')
-        + (fut ? ' future' : '');
-      card.tabIndex = 0;
-      card.setAttribute('role', 'button');
-      card.setAttribute('aria-label', `${day.date.getDate()} ${MONTHS_FULL[day.date.getMonth()]}, ${d.checked.length} ta bajarildi ${totalT} dan`);
-      card.onclick = () => openModal(i);
-      card.onkeydown = e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(i); }
-      };
-
-      const dd = day.date.getDate();
-      const mm = MONTHS[day.date.getMonth()];
-      const wd = WDS[day.date.getDay()];
-      const all = getAllTasks(i);
-      const pills = all.map((t, ti) => {
-        const checked = d.checked.includes(ti);
-        const type = t.custom ? 'custom' : t.type;
-        return `<div class="pill ${checked ? 'done-pill' : type}" title="${escapeHtml(t.label)}">${escapeHtml(t.label)}</div>`;
-      }).join('');
-
-      const miniPct = totalT > 0 ? (d.checked.length / totalT) * 100 : 0;
-
-      card.innerHTML = `
-        ${tod ? '<div class="today-tag">BUGUN</div>' : ''}
-        <div class="day-head"><div class="day-num">${dd}</div><div class="day-month">${mm}</div></div>
-        <div class="day-wd">${wd}</div>
-        <div class="task-pills">${pills}</div>
-        ${!done && d.checked.length > 0 ? `<div class="day-progress-mini"><div class="day-progress-mini-fill" style="width:${miniPct}%"></div></div>` : ''}
-      `;
-      grid.appendChild(card);
-    });
-  });
-
-  // 100% celebration
-  if (pct === 100 && !localStorage.getItem('ht5_celebrated')) {
-    localStorage.setItem('ht5_celebrated', '1');
-    confetti();
-    toast('🎉 Tabriklayman! Hammasini tugatding!', 'success');
-  }
-}
-
-function phaseRange(arr) {
-  if (!arr.length) return '';
-  const a = arr[0].date, b = arr[arr.length-1].date;
-  return `${a.getDate()}-${MONTHS[a.getMonth()]} — ${b.getDate()}-${MONTHS[b.getMonth()]}`;
-}
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-// ============ MODAL ============
-function openModal(i) {
-  openIdx = i;
-  const day = days[i];
-  const d = getDay(i);
-  const all = getAllTasks(i);
-
-  document.getElementById('m-date').textContent = `${day.date.getDate()} ${MONTHS_FULL[day.date.getMonth()]}`;
-  document.getElementById('m-sub').textContent = `${WD[day.date.getDay()]} · ${day.isPhase1 ? 'SAT Focus' : 'IELTS Focus'} · ${d.checked.length}/${all.length}`;
-
-  let sections;
-  if (day.isPhase1) {
-    sections = [
-      { title: 'SAT English', range: [0, 2] },
-      { title: 'SAT Math', range: [2, 4] },
-      { title: 'IELTS', range: [4, 5] },
-    ];
+// ==================== AUTH ====================
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    currentUser = session.user;
+    await loadData();
+    showApp();
   } else {
-    sections = [{ title: 'IELTS', range: [0, 5] }];
+    showLogin();
   }
-  // Custom tasks section
-  if (d.custom && d.custom.length) {
-    sections.push({ title: 'Qo\u2019shimcha', range: [5, 5 + d.custom.length], isCustom: true });
-  }
-
-  let html = '';
-  sections.forEach(sec => {
-    const start = sec.range[0], endR = sec.range[1];
-    const sectionTasks = all.slice(start, endR);
-    if (!sectionTasks.length) return;
-    const doneInSec = sectionTasks.filter((_, j) => d.checked.includes(start + j)).length;
-    html += `<div class="m-section">
-      <div class="m-section-title">
-        <span>${sec.title}</span>
-        <span class="m-section-count">${doneInSec}/${sectionTasks.length}</span>
-      </div>`;
-    sectionTasks.forEach((t, j) => {
-      const ti = start + j;
-      const on = d.checked.includes(ti);
-      const note = d.notes?.[ti] || '';
-      html += `<div class="m-task${on ? ' checked' : ''}" data-ti="${ti}">
-        <div class="m-check${on ? ' on' : ''}" data-toggle="${ti}" role="checkbox" aria-checked="${on}" tabindex="0"></div>
-        <div class="m-task-content">
-          <div class="m-task-label" data-toggle="${ti}">${escapeHtml(t.label)}</div>
-          ${t.url ? `<a class="m-task-link" href="${escapeHtml(t.url)}" target="_blank" rel="noopener">→ Ochish</a>` : ''}
-          ${t.tip ? `<div class="m-task-tip">💡 ${escapeHtml(t.tip)}</div>` : ''}
-          <textarea class="m-task-note" data-note="${ti}" placeholder="Izoh yoz..." rows="1">${escapeHtml(note)}</textarea>
-        </div>
-        ${sec.isCustom ? `<button class="m-task-delete" data-delete="${ti}" title="O\u2019chirish">✕</button>` : ''}
-      </div>`;
-    });
-    html += `</div>`;
-  });
-
-  html += `<button class="m-add-task" id="m-add">+ Qo\u2019shimcha vazifa qo\u2019shish</button>`;
-
-  document.getElementById('m-body').innerHTML = html;
-  document.getElementById('overlay').classList.add('open');
-
-  // Event delegation
-  const body = document.getElementById('m-body');
-  body.querySelectorAll('[data-toggle]').forEach(el => {
-    el.onclick = () => toggle(i, parseInt(el.dataset.toggle));
-    if (el.classList.contains('m-check')) {
-      el.onkeydown = e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggle(i, parseInt(el.dataset.toggle));
-        }
-      };
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      currentUser = session.user;
+      await loadData();
+      showApp();
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null;
+      showLogin();
     }
   });
-  body.querySelectorAll('[data-note]').forEach(el => {
-    el.oninput = () => {
-      const ti = parseInt(el.dataset.note);
-      const dd = getDay(i);
-      dd.notes = dd.notes || {};
-      dd.notes[ti] = el.value;
-      setDay(i, dd);
-    };
-  });
-  body.querySelectorAll('[data-delete]').forEach(el => {
-    el.onclick = () => {
-      const ti = parseInt(el.dataset.delete);
-      const dd = getDay(i);
-      const customIdx = ti - days[i].tasks.length;
-      dd.custom.splice(customIdx, 1);
-      // Re-index checked
-      dd.checked = dd.checked.filter(c => c !== ti).map(c => c > ti ? c - 1 : c);
-      // Re-index notes
-      const newNotes = {};
-      Object.keys(dd.notes || {}).forEach(k => {
-        const kn = parseInt(k);
-        if (kn < ti) newNotes[kn] = dd.notes[k];
-        else if (kn > ti) newNotes[kn - 1] = dd.notes[k];
-      });
-      dd.notes = newNotes;
-      setDay(i, dd);
-      openModal(i);
-      render();
-    };
-  });
-  document.getElementById('m-add').onclick = () => {
-    const label = prompt('Vazifa nomi:');
-    if (!label || !label.trim()) return;
-    const dd = getDay(i);
-    dd.custom = dd.custom || [];
-    dd.custom.push({ label: label.trim(), type: 'custom', custom: true, url: '', tip: '' });
-    setDay(i, dd);
-    openModal(i);
-    render();
-  };
 }
 
-function toggle(i, ti) {
-  const d = getDay(i);
-  const idx = d.checked.indexOf(ti);
-  const wasDone = isDayDone(i);
-  if (idx === -1) d.checked.push(ti);
-  else d.checked.splice(idx, 1);
-  setDay(i, d);
+async function loginGoogle() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+  if (error) toast('Login error: ' + error.message);
+}
 
-  const nowDone = isDayDone(i);
-  if (!wasDone && nowDone) {
-    toast('Kun tugadi! 🎯', 'success');
-    if (navigator.vibrate) navigator.vibrate(50);
-  } else if (idx === -1 && navigator.vibrate) {
-    navigator.vibrate(15);
-  }
+async function logout() {
+  await sb.auth.signOut();
+}
 
-  openModal(i);
+function showLogin() {
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('app').classList.add('hidden');
+}
+
+function showApp() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('userEmail').textContent = currentUser.email;
+  applyTheme();
   render();
 }
 
-function markAll() {
-  if (openIdx === null) return;
-  const i = openIdx;
-  const all = getAllTasks(i);
-  const d = getDay(i);
-  d.checked = all.map((_, j) => j);
-  setDay(i, d);
-  toast('Hammasi belgilandi ✓', 'success');
-  if (navigator.vibrate) navigator.vibrate([30, 30, 30]);
-  openModal(i);
+// ==================== DATA ====================
+async function loadData() {
+  setSync('syncing');
+  try {
+    const { data, error } = await sb
+      .from('habit_data')
+      .select('*')
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (data) {
+      state.data = data.data || {};
+      state.startDate = data.start_date || todayISO();
+      state.theme = data.theme || 'dark';
+      state.notifications = data.notifications || false;
+      state.bestStreak = (data.data && data.data._bestStreak) || 0;
+    } else {
+      // First-time user — create row
+      state.startDate = todayISO();
+      state.data = {};
+      await saveData(true);
+    }
+    setSync('synced');
+  } catch (e) {
+    console.error(e);
+    // Fallback to localStorage
+    const cached = localStorage.getItem('ht5_' + currentUser.id);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      state = { ...state, ...parsed };
+    }
+    setSync('offline');
+    toast('Offline mode — saqlanmagan o\'zgarishlar keyinroq sync bo\'ladi');
+  }
+}
+
+async function saveData(immediate = false) {
+  // Always save to localStorage instantly
+  localStorage.setItem('ht5_' + currentUser.id, JSON.stringify({
+    data: state.data, startDate: state.startDate,
+    theme: state.theme, notifications: state.notifications
+  }));
+
+  // Debounce Supabase saves (unless immediate)
+  if (saveTimer) clearTimeout(saveTimer);
+  const delay = immediate ? 0 : 800;
+  saveTimer = setTimeout(async () => {
+    setSync('syncing');
+    try {
+      const dataWithMeta = { ...state.data, _bestStreak: state.bestStreak };
+      const { error } = await sb.from('habit_data').upsert({
+        user_id: currentUser.id,
+        data: dataWithMeta,
+        start_date: state.startDate,
+        theme: state.theme,
+        notifications: state.notifications
+      });
+      if (error) throw error;
+      setSync('synced');
+    } catch (e) {
+      console.error(e);
+      setSync('offline');
+    }
+  }, delay);
+}
+
+function setSync(status) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.className = 'sync-status ' + status;
+  el.textContent = status === 'syncing' ? '⟳ syncing...' :
+                   status === 'synced' ? '✓ synced' :
+                   status === 'offline' ? '⚠ offline' : '●';
+}
+
+// ==================== RENDER ====================
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function addDays(iso, n) {
+  const d = new Date(iso + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+function formatDate(iso) {
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' });
+}
+
+function getDayData(idx) {
+  if (!state.data[idx]) {
+    state.data[idx] = {
+      tasks: DEFAULT_PLAN[idx].tasks.map(t => ({ text: t, done: false })),
+      customTasks: [],
+      notes: ''
+    };
+  }
+  return state.data[idx];
+}
+
+function dayProgress(idx) {
+  const d = getDayData(idx);
+  const all = [...d.tasks, ...(d.customTasks || [])];
+  if (all.length === 0) return 0;
+  return all.filter(t => t.done).length / all.length;
+}
+
+function todayIdx() {
+  if (!state.startDate) return -1;
+  const start = new Date(state.startDate + 'T00:00:00');
+  const today = new Date(todayISO() + 'T00:00:00');
+  const diff = Math.floor((today - start) / 86400000);
+  return diff >= 0 && diff < 22 ? diff : -1;
+}
+
+function calcStreak() {
+  let streak = 0;
+  const tIdx = todayIdx();
+  if (tIdx < 0) return 0;
+  for (let i = tIdx; i >= 0; i--) {
+    if (dayProgress(i) >= 1) streak++;
+    else break;
+  }
+  if (streak > state.bestStreak) state.bestStreak = streak;
+  return streak;
+}
+
+function render() {
+  const tIdx = todayIdx();
+  const completed = Object.keys(state.data).filter(k => !isNaN(k) && dayProgress(parseInt(k)) >= 1).length;
+  const totalTasks = DEFAULT_PLAN.reduce((s, _, i) => {
+    const d = getDayData(i);
+    return s + d.tasks.length + (d.customTasks?.length || 0);
+  }, 0);
+  const doneTasks = DEFAULT_PLAN.reduce((s, _, i) => {
+    const d = getDayData(i);
+    return s + d.tasks.filter(t => t.done).length + (d.customTasks?.filter(t => t.done).length || 0);
+  }, 0);
+  const pct = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
+  const streak = calcStreak();
+
+  document.getElementById('dayNum').textContent = (tIdx + 1) + '/22';
+  document.getElementById('overallPct').textContent = pct + '%';
+  document.getElementById('streakNum').textContent = streak;
+  document.getElementById('bestStreakNum').textContent = state.bestStreak;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // Days list
+  const list = document.getElementById('daysList');
+  list.innerHTML = '';
+  let lastPhase = '';
+  DEFAULT_PLAN.forEach((day, idx) => {
+    // Filter
+    if (currentFilter === 'sat' && day.phase !== 'SAT') return;
+    if (currentFilter === 'ielts' && day.phase !== 'IELTS') return;
+    if (currentFilter === 'today' && idx !== tIdx) return;
+    if (currentFilter === 'incomplete' && dayProgress(idx) >= 1) return;
+
+    if (day.phase !== lastPhase && currentFilter === 'all') {
+      const h = document.createElement('div');
+      h.className = 'phase-header';
+      h.textContent = day.phase === 'SAT' ? '🎯 SAT Focus (12 days)' : '🌐 IELTS Focus (10 days)';
+      list.appendChild(h);
+      lastPhase = day.phase;
+    }
+
+    const prog = dayProgress(idx);
+    const el = document.createElement('div');
+    el.className = 'day' + (idx === tIdx ? ' today' : '') + (prog >= 1 ? ' done' : '');
+    el.innerHTML = `
+      <div class="day-header">
+        <span class="day-title">${day.title}</span>
+        <span class="badge ${day.phase.toLowerCase()}">${day.phase}</span>
+      </div>
+      <div class="day-date">${formatDate(addDays(state.startDate, idx))} • ${Math.round(prog*100)}% done</div>
+      <div class="mini-progress"><div class="mini-fill" style="width:${prog*100}%"></div></div>
+    `;
+    el.onclick = () => openModal(idx);
+    list.appendChild(el);
+  });
+
+  // Auto-scroll to today on first render
+  if (!window._scrolled && tIdx >= 0) {
+    setTimeout(() => {
+      const todayEl = list.querySelector('.day.today');
+      if (todayEl) todayEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window._scrolled = true;
+    }, 100);
+  }
+}
+
+// ==================== MODAL ====================
+function openModal(idx) {
+  currentDayIdx = idx;
+  const day = DEFAULT_PLAN[idx];
+  const d = getDayData(idx);
+  document.getElementById('modalTitle').textContent = day.title;
+  document.getElementById('modalDate').textContent = formatDate(addDays(state.startDate, idx));
+  renderTasks();
+  document.getElementById('dayNotes').value = d.notes || '';
+  document.getElementById('modal').classList.add('show');
+  document.getElementById('newTaskInput').value = '';
+}
+
+function renderTasks() {
+  const d = getDayData(currentDayIdx);
+  const list = document.getElementById('tasksList');
+  list.innerHTML = '';
+  d.tasks.forEach((t, i) => list.appendChild(taskEl(t, () => toggleTask(i, false))));
+  (d.customTasks || []).forEach((t, i) => {
+    list.appendChild(taskEl(t, () => toggleTask(i, true), () => deleteCustomTask(i)));
+  });
+}
+
+function taskEl(task, onToggle, onDelete) {
+  const div = document.createElement('div');
+  div.className = 'task' + (task.done ? ' done' : '');
+  const id = 'task_' + Math.random().toString(36).slice(2);
+  div.innerHTML = `
+    <input type="checkbox" id="${id}" ${task.done ? 'checked' : ''}>
+    <label for="${id}"></label>
+  `;
+  div.querySelector('label').textContent = task.text;
+  div.querySelector('input').onchange = onToggle;
+  if (onDelete) {
+    const btn = document.createElement('button');
+    btn.className = 'delete-task';
+    btn.textContent = '✕';
+    btn.onclick = (e) => { e.stopPropagation(); onDelete(); };
+    div.appendChild(btn);
+  }
+  return div;
+}
+
+function toggleTask(i, isCustom) {
+  const d = getDayData(currentDayIdx);
+  const arr = isCustom ? d.customTasks : d.tasks;
+  arr[i].done = !arr[i].done;
+  if (navigator.vibrate) navigator.vibrate(10);
+  saveData();
+  renderTasks();
+  render();
+  if (dayProgress(currentDayIdx) >= 1) celebrate();
+}
+
+function addCustomTask() {
+  const input = document.getElementById('newTaskInput');
+  const text = input.value.trim();
+  if (!text) return;
+  const d = getDayData(currentDayIdx);
+  if (!d.customTasks) d.customTasks = [];
+  d.customTasks.push({ text, done: false });
+  input.value = '';
+  saveData();
+  renderTasks();
+  render();
+}
+
+function deleteCustomTask(i) {
+  const d = getDayData(currentDayIdx);
+  d.customTasks.splice(i, 1);
+  saveData();
+  renderTasks();
   render();
 }
 
 function closeModal() {
-  document.getElementById('overlay').classList.remove('open');
-  openIdx = null;
+  // Save notes
+  if (currentDayIdx !== null) {
+    const d = getDayData(currentDayIdx);
+    d.notes = document.getElementById('dayNotes').value;
+    saveData();
+  }
+  document.getElementById('modal').classList.remove('show');
+  currentDayIdx = null;
 }
 
-// ============ TOAST ============
-let toastTimer = null;
-function toast(msg, type) {
+// ==================== UI HELPERS ====================
+function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.className = 'toast show' + (type === 'success' ? ' success' : '');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.className = 'toast'; }, 2200);
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ============ CONFETTI ============
-function confetti() {
-  const c = document.getElementById('confetti');
-  const colors = ['#4ade80', '#60a5fa', '#fbbf24', '#a78bfa', '#f87171'];
-  for (let i = 0; i < 50; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti-piece';
-    p.style.background = colors[i % colors.length];
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDelay = (Math.random() * 0.3) + 's';
-    p.style.animationDuration = (2 + Math.random() * 1.5) + 's';
-    c.appendChild(p);
-  }
-  setTimeout(() => { c.innerHTML = ''; }, 3500);
+function celebrate() {
+  toast('🎉 Day complete!');
+  if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
 }
 
-// ============ THEME ============
-function initTheme() {
-  const saved = localStorage.getItem('ht5_theme');
-  const sys = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  const theme = saved || sys;
-  setTheme(theme);
-}
-function setTheme(t) {
-  document.documentElement.dataset.theme = t;
-  localStorage.setItem('ht5_theme', t);
-  document.getElementById('btn-theme').textContent = t === 'light' ? '☀️' : '🌙';
-  document.querySelector('meta[name="theme-color"]').content = t === 'light' ? '#fafafa' : '#0f0f0f';
+function applyTheme() {
+  document.documentElement.setAttribute('data-theme', state.theme);
+  document.getElementById('themeBtn').textContent = state.theme === 'dark' ? '🌙' : '☀️';
 }
 
-// ============ NOTIFICATIONS ============
+function toggleTheme() {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  applyTheme();
+  saveData();
+}
+
 async function toggleNotif() {
-  if (!('Notification' in window)) {
-    toast('Brauzer eslatmani qo\u2019llab-quvvatlamaydi');
-    return;
+  if (!('Notification' in window)) { toast('Notifications not supported'); return; }
+  if (Notification.permission === 'default') {
+    const p = await Notification.requestPermission();
+    if (p !== 'granted') { toast('Permission denied'); return; }
   }
-  if (Notification.permission === 'granted') {
-    localStorage.removeItem('ht5_notif');
-    document.getElementById('btn-notif').classList.remove('active');
-    toast('Eslatma o\u2019chirildi');
-    return;
-  }
-  const p = await Notification.requestPermission();
-  if (p === 'granted') {
-    localStorage.setItem('ht5_notif', '1');
-    document.getElementById('btn-notif').classList.add('active');
-    toast('Eslatma yoqildi 🔔', 'success');
-    new Notification('SAT + IELTS Tracker', { body: 'Eslatma yoqildi! Har kuni 09:00 da yodga solaman.' });
-  }
-}
-function checkNotifSchedule() {
-  if (localStorage.getItem('ht5_notif') !== '1') return;
-  if (Notification.permission !== 'granted') return;
-  const last = localStorage.getItem('ht5_notif_last');
-  const todayStr = todayDate.toDateString();
-  if (last === todayStr) return;
-  const now = new Date();
-  if (now.getHours() < 9) return;
-  // Find today's day
-  const todayI = days.findIndex(d => isToday(d.date));
-  if (todayI === -1) return;
-  if (isDayDone(todayI)) return;
-  new Notification('SAT + IELTS Tracker', {
-    body: 'Bugungi vazifalaring kutmoqda 📚',
-    icon: ''
-  });
-  localStorage.setItem('ht5_notif_last', todayStr);
+  state.notifications = !state.notifications;
+  document.getElementById('notifBtn').textContent = state.notifications ? '🔔' : '🔕';
+  toast(state.notifications ? 'Notifications ON' : 'Notifications OFF');
+  saveData();
 }
 
-// ============ INIT ============
-function init() {
-  initTheme();
-  render();
-  if (localStorage.getItem('ht5_notif') === '1' && Notification.permission === 'granted') {
-    document.getElementById('btn-notif').classList.add('active');
-  }
-  checkNotifSchedule();
-  setInterval(checkNotifSchedule, 10 * 60 * 1000); // har 10 daqiqada
+// ==================== EVENTS ====================
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 't' || e.key === 'T') toggleTheme();
+  if (e.key === 'n' || e.key === 'N') toggleNotif();
+});
 
-  // Today's card ga scroll qil
-  setTimeout(() => {
-    const todayCard = document.querySelector('.day-card.today');
-    if (todayCard) todayCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 300);
-}
+document.getElementById('themeBtn').onclick = toggleTheme;
+document.getElementById('notifBtn').onclick = toggleNotif;
 
-// ============ EVENT LISTENERS ============
-document.getElementById('overlay').onclick = function(e) {
-  if (e.target === this) closeModal();
-};
-document.getElementById('btn-close').onclick = closeModal;
-document.getElementById('btn-all').onclick = markAll;
-document.getElementById('btn-theme').onclick = () => {
-  setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
-};
-document.getElementById('btn-notif').onclick = toggleNotif;
-document.getElementById('btn-reset').onclick = () => {
-  if (confirm('Hammasini tozalashga ishonchingiz komilmi? Bu amalni qaytarib bo\u2019lmaydi.')) {
-    localStorage.removeItem(KEY);
-    localStorage.removeItem('ht5_celebrated');
-    toast('Hammasi tozalandi');
-    render();
-  }
-};
-document.querySelectorAll('.filter-chip').forEach(chip => {
+document.querySelectorAll('.chip').forEach(chip => {
   chip.onclick = () => {
-    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     currentFilter = chip.dataset.filter;
     render();
   };
 });
 
-// Keyboard shortcuts
-document.addEventListener('keydown', e => {
-  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
-  if (e.key === 'Escape' && openIdx !== null) closeModal();
-  if (e.key === 't' || e.key === 'T') setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
-  if (e.key === 'n' || e.key === 'N') toggleNotif();
+document.getElementById('newTaskInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addCustomTask();
 });
 
+document.getElementById('dayNotes').addEventListener('blur', () => {
+  if (currentDayIdx !== null) {
+    getDayData(currentDayIdx).notes = document.getElementById('dayNotes').value;
+    saveData();
+  }
+});
+
+// Realtime sync across devices
+sb.channel('habit_changes')
+  .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'habit_data' }, async (payload) => {
+    if (currentUser && payload.new.user_id === currentUser.id) {
+      // Skip if it's our own recent update
+      const localUpdated = localStorage.getItem('ht5_' + currentUser.id + '_lastWrite');
+      if (localUpdated && Date.now() - parseInt(localUpdated) < 2000) return;
+      state.data = payload.new.data || {};
+      render();
+      toast('🔄 Synced from another device');
+    }
+  })
+  .subscribe();
+
+// Daily notification at 9am
+setInterval(() => {
+  if (!state.notifications) return;
+  const now = new Date();
+  if (now.getHours() === 9 && now.getMinutes() === 0 && Notification.permission === 'granted') {
+    const tIdx = todayIdx();
+    if (tIdx >= 0 && dayProgress(tIdx) < 1) {
+      new Notification('📚 SAT+IELTS Tracker', {
+        body: `Bugun: ${DEFAULT_PLAN[tIdx].title}. Boshla!`
+      });
+    }
+  }
+}, 60000);
+
+// Init
 init();
 </script>
 </body>
